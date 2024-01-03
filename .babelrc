@@ -1,0 +1,15 @@
+{
+  "presets": [
+    ["@babel/preset-env", {
+      "targets": {
+        "esmodules": true
+      },
+      "sourceType": "module",
+      "corejs": "3.0.0",
+      "useBuiltIns": "usage"
+    }],
+    ["@babel/preset-react", {"runtime": "automatic"}],
+    "@babel/preset-typescript"
+  ],
+  "plugins": ["@babel/plugin-transform-modules-commonjs"]
+}
