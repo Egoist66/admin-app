@@ -11,11 +11,11 @@ gulp.task("copy-html", () => {
 });
 
 gulp.task("build-js", () => {
-    return gulp.src("./app/src/main.js")
+    return gulp.src("./app/src/index.tsx")
         .pipe(webpack({
-            mode: 'development',
+            mode: 'production',
             output: {
-                filename: 'script.js'
+                filename: 'bundle.js'
             },
             watch: false,
             devtool: "source-map",
@@ -34,6 +34,7 @@ gulp.task("build-js", () => {
                                         useBuiltIns: "usage"
                                     }],
                                     "@babel/react",
+                                    "@babel/preset-typescript",
 
                                 ]
                             }

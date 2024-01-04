@@ -1,14 +1,17 @@
-import React from "react";
 import {createRoot} from "react-dom/client";
-import styled from "styled-components";
-
-const App = styled.div`
- width: 500px;
- background: red; 
-
-`
+import { App } from "./components/App/App";
+import React from "react";
+import { GlobalStyle } from "./globalStyle/style";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 
 const root = createRoot(document.getElementById('root')!)
 root.render(
-    <App>Hello wor</App>
+
+    <Provider store={store}>
+     <GlobalStyle />
+     <App />
+    
+    
+    </Provider>
 )
