@@ -25,11 +25,10 @@ export const fetchPages = createAsyncThunk(
           try {
 
                const { data } = await axios.get('./api/index.php')
-
                return data
           }
           catch (e: any) {
-               rejectWithValue(e.message)
+               return rejectWithValue(e.message)
           }
  })
 
@@ -39,12 +38,24 @@ export const createPages = createAsyncThunk(
      async (formData: FormData, { rejectWithValue, dispatch}) => {
           try {
                const response = await axios.post('./api/newpage.php', formData)
-               
                return response.data
 
           }
           catch (e) {
-               rejectWithValue(e)
+               return rejectWithValue(e)
+          }
+})
+
+export const deletePages = createAsyncThunk(
+     'delete/pages',
+     async (page: string, { rejectWithValue, dispatch}) => {
+          try {
+               const response = await axios.post('./api/delete-page.php', {filename: page})
+               return response.data
+
+          }
+          catch (e) {
+               return rejectWithValue(e)
           }
      })
 
@@ -52,8 +63,15 @@ export const createPages = createAsyncThunk(
 const pageListSlice = createSlice({
      name: 'pagelist',
      initialState,
-     reducers: {},
+     reducers: {
+          clearMessage(state){
+               state.message = ''
+          }
+     },
      extraReducers(builder) {
+
+          // load pages reducers
+
           builder.addCase(fetchPages.pending, (state, action) => {
                state.status = 'pending'
           }),
@@ -70,6 +88,10 @@ const pageListSlice = createSlice({
 
           }),
 
+
+
+          // create pages reducers
+
           builder.addCase(createPages.pending, (state, action) => {
                state.status = 'pending'
           }),
@@ -78,18 +100,37 @@ const pageListSlice = createSlice({
                state.status = 'resolved'
                state.message = action.payload.response
                state.statusCode = action.payload.status
-               state.pageList = !action.payload.files.length ? [...state.pageList, ...action.payload.files] : [...action.payload.files]
+               state.pageList = !action.payload.files?.length ? [...state.pageList, ...action.payload.files] : [...action.payload.files]
           }),
 
           builder.addCase(createPages.rejected, (state, action) => {
                state.status = 'rejected'
                state.message = action.error.message!
           })
+
+
+          // delete pages reducers
+
+          builder.addCase(deletePages.pending, (state, action) => {
+               state.status = 'pending'
+          }),
+
+          builder.addCase(deletePages.fulfilled, (state, action: PayloadAction<{status: 0 | 1, response: string, files: string[]}>) => {
+               state.status = 'resolved'
+               state.message = action.payload.response
+               state.statusCode = action.payload.status
+               state.pageList = !action.payload.files?.length ? [...state.pageList, ...action.payload.files] : [...action.payload.files]
+          }),
+
+          builder.addCase(deletePages.rejected, (state, action) => {
+               state.status = 'rejected'
+               state.message = `Невозможно удалить текущую страницу!`
+          })
      },
 
 })
 
-export const { } = pageListSlice.actions
+export const {clearMessage} = pageListSlice.actions
 export default pageListSlice.reducer
 
 export const pageListSelector = (state: AppRootState) => state.pageList

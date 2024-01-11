@@ -1,7 +1,5 @@
-import React, { FC, FormEvent, FormEventHandler, RefObject, forwardRef, memo, useEffect, useRef } from "react";
+import React, { FC, FormEvent, RefObject, forwardRef, memo, useEffect } from "react";
 import styled from "styled-components";
-import { pageListSelector } from "../../store/slice/pagelist-slice";
-import { useAppSelector } from "../../store/store";
 
 
 const StyledEditor = styled.div`
@@ -9,20 +7,29 @@ const StyledEditor = styled.div`
 `
 
 type EditorViewProps = {
-     pageList: string[]
-     message: string
-     inputRef: RefObject<HTMLInputElement>
-     statusCode: 0 | 1
-     createPage: (e: FormEvent<HTMLFormElement>) => void
-     status: 'resolved' | 'pending' | 'rejected'
+     data: {
+          pageList: string[]
+          message: string
+          deletePage: (page: string) => void
+          inputRef: RefObject<HTMLInputElement>
+          statusCode: 0 | 1
+          createPage: (e: FormEvent<HTMLFormElement>) => void
+          status: 'resolved' | 'pending' | 'rejected'
+     }
 }
 
-export const EditorView: FC<EditorViewProps> = memo(forwardRef(({ pageList, inputRef, statusCode, message, createPage, status }) => {
+export const EditorView: FC<EditorViewProps> = memo(forwardRef(({data}) => {
 
+     const {pageList, deletePage, inputRef, statusCode, message, createPage, status } = data
+
+     EditorView.displayName = "EditorView"
+     
      const pages = (
           <div>
                {status !== 'pending' ? pageList.map((p, index) => (
-                    <p key={index}>{p}</p>
+                    <div className="file-name" key={index}>{p} 
+                        <a onClick={() => deletePage(p)} href="#">Delete</a> 
+                    </div>
                )) : <h2>Loading...</h2>}
           </div>
      )
@@ -44,19 +51,28 @@ export const EditorView: FC<EditorViewProps> = memo(forwardRef(({ pageList, inpu
 
      }, [status])
 
+     // useEffect(() => {
+          
+     //      if(message){
+     //           alert(message)
+     //      }
+         
+          
+     // }, [message])
 
      return (
 
           <StyledEditor >
 
                <form onSubmit={createPage}>
-                    <input name='filename' ref={inputRef} type="text" />
-                    <button type="submit">Создать новую страницу</button>
+                    <input data-value={inputRef?.current?.value} name='filename' ref={inputRef} type="text" />
+                    <button disabled={status === 'pending'} type="submit">Создать новую страницу</button>
 
                </form>
 
-               {message}
+               {message ? <p>{message}</p>: null}
                {pages}
+
 
 
           </StyledEditor>
