@@ -1,18 +1,5 @@
 <?php
-
-function getHTMLFiles(string $url) {
-
-     $htmlFiles = glob($url);
-     $modifiedFiles = [];
-     
-     foreach ($htmlFiles as $file) {
-          array_push($modifiedFiles,
-           basename($file
-          ));
-     }
-
-     return $modifiedFiles;
-}
+require_once('./utils/getPages.php');
 
 echo json_encode(getHTMLFiles("../../*.html"));
 
