@@ -5,9 +5,9 @@ const path = require("path");
 
 module.exports = {
     entry: "./app/src/index.tsx",
-    mode: "development",
+    mode: "production",
     output: {
-        filename: "bundle.js",
+        filename: "bundle.min.js",
         path: path.resolve(__dirname, "dist"),
     },
     plugins: [

@@ -18,14 +18,14 @@ function createNewPage(){
      }
      else {
           fopen($new_page_path,"w");
-
-          http_response_code(201);
-
           echo json_encode(array(
                "status" => 0,
                "files" => getHTMLFiles("../../*.html"),
                "response" => "Страница успешно создана!"
           ));
+
+          http_response_code(201);
+
      }
 
 }

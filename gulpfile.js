@@ -15,7 +15,7 @@ gulp.task("build-js", () => {
         .pipe(webpack({
             mode: 'production',
             output: {
-                filename: 'bundle.js'
+                filename: 'bundle.min.js'
             },
             watch: false,
             devtool: "source-map",

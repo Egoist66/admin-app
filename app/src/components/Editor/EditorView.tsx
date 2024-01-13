@@ -8,8 +8,9 @@ const StyledEditor = styled.div`
 
 type EditorViewProps = {
      data: {
-          pageList: string[]
+          files: string[]
           message: string
+          currentPage: string
           deletePage: (page: string) => void
           inputRef: RefObject<HTMLInputElement>
           statusCode: 0 | 1
@@ -18,17 +19,17 @@ type EditorViewProps = {
      }
 }
 
-export const EditorView: FC<EditorViewProps> = memo(forwardRef(({data}) => {
+export const EditorView: FC<EditorViewProps> = memo(forwardRef(({ data }) => {
 
-     const {pageList, deletePage, inputRef, statusCode, message, createPage, status } = data
+     const { files, currentPage, deletePage, inputRef, statusCode, message, createPage, status } = data
 
      EditorView.displayName = "EditorView"
-     
+
      const pages = (
           <div>
-               {status !== 'pending' ? pageList.map((p, index) => (
-                    <div className="file-name" key={index}>{p} 
-                        <a onClick={() => deletePage(p)} href="#">Delete</a> 
+               {status !== 'pending' ? files.map((p, index) => (
+                    <div className="file-name" key={index}>{p}
+                         <a onClick={() => deletePage(p)} href="#">Delete</a>
                     </div>
                )) : <h2>Loading...</h2>}
           </div>
@@ -52,18 +53,20 @@ export const EditorView: FC<EditorViewProps> = memo(forwardRef(({data}) => {
      }, [status])
 
      // useEffect(() => {
-          
+
      //      if(message){
      //           alert(message)
      //      }
-         
-          
+
+
      // }, [message])
+
+
 
      return (
 
           <StyledEditor >
-
+               {/* 
                <form onSubmit={createPage}>
                     <input data-value={inputRef?.current?.value} name='filename' ref={inputRef} type="text" />
                     <button disabled={status === 'pending'} type="submit">Создать новую страницу</button>
@@ -71,9 +74,9 @@ export const EditorView: FC<EditorViewProps> = memo(forwardRef(({data}) => {
                </form>
 
                {message ? <p>{message}</p>: null}
-               {pages}
+               {pages} */}
 
-
+               <iframe src={currentPage} frameBorder="0"></iframe>
 
           </StyledEditor>
      )
