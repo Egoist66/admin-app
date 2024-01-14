@@ -24,7 +24,7 @@ export const fetchPages = createAsyncThunk(
      async (_, { rejectWithValue }) => {
      try {
 
-          const { data } = await axios.get('./api/index.php')
+          const { data } = await axios.get('./api/fetch-pages.php')
           return data
      }
      catch (e: any) {
@@ -37,7 +37,7 @@ export const createPages = createAsyncThunk(
      'create/pages',
      async (formData: FormData, { rejectWithValue}) => {
      try {
-          const response = await axios.post('./api/newpage.php', formData)
+          const response = await axios.post('./api/new-page.php', formData)
           return response.data
 
      }

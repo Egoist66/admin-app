@@ -52,14 +52,6 @@ export const EditorView: FC<EditorViewProps> = memo(forwardRef(({ data }) => {
 
      }, [status])
 
-     // useEffect(() => {
-
-     //      if(message){
-     //           alert(message)
-     //      }
-
-
-     // }, [message])
 
 
 
