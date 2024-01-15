@@ -1,7 +1,7 @@
 import { ThunkDispatch, UnknownAction, combineReducers, configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useSelector, useDispatch } from "react-redux";
 import PageListSliceReducer from './slice/pagelist-slice'
-import indexSourceSlice from "./slice/index-source-slice";
+import indexSourceSlice from "./slice/source-slice";
 
 const rootReducer = combineReducers({
      pageList: PageListSliceReducer,

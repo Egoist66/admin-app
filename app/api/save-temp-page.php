@@ -16,7 +16,7 @@ function saveTemplatePage()
           ));
           http_response_code(201);
 
-          exit();
+          return;
      } else {
 
           echo json_encode(array(

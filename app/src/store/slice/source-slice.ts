@@ -46,6 +46,21 @@ export const createTemplatePage = createAsyncThunk(
 
 })
 
+
+export const saveEdits = createAsyncThunk(
+     'save/edits', 
+     async ({html, pagename}: {html: string, pagename: string}, {rejectWithValue}) => {
+         
+     try {
+          const {data} = await axios.post('./api/save-edits.php', {html, pagename})
+          return data
+     } 
+     catch (e: any) {
+          return rejectWithValue(e.message)
+     }
+
+})
+
 const indexSourceSlice = createSlice({
      name: 'index/source',
      initialState,
@@ -77,6 +92,23 @@ const indexSourceSlice = createSlice({
           }),
 
           builder.addCase(createTemplatePage.rejected, (state, action) => {
+               state.status = 'rejected'
+               
+               
+          })
+
+
+          builder.addCase(saveEdits.pending, (state) => {
+               state.status = 'pending'
+          }),
+
+          builder.addCase(saveEdits.fulfilled, (state, action: PayloadAction<{response: string, statusCode: number}>) => {
+               state.status = 'resolved'
+               state.message = action.payload.response
+               state.statusCode = action.payload.statusCode
+          }),
+
+          builder.addCase(saveEdits.rejected, (state, action) => {
                state.status = 'rejected'
                
                

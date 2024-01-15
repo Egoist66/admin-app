@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../store/store";
 import { delay } from '../../utils/delay'
 import { clearMessage, createPages, deletePages, fetchPages, filesSelector } from "../../store/slice/pagelist-slice";
 import "../../helpers/iframeLoader"
-import { createTemplatePage, fetchSourceIndexData, indexSrcSelector } from "../../store/slice/index-source-slice";
+import { createTemplatePage, fetchSourceIndexData, indexSrcSelector, saveEdits } from "../../store/slice/source-slice";
 
 
 type EditorStateType = {
@@ -20,22 +20,32 @@ export const Editor: FC = () => {
           virtualDom: null,
           iframe: null
      })
-     const { current: { currentPage, iframe } } = options
+     const { current: { currentPage } } = options
      const dispatch = useAppDispatch()
 
 
      const { files, status, message, statusCode } = useAppSelector(filesSelector)
-     const {sourceData} = useAppSelector(indexSrcSelector)
+     const { sourceData } = useAppSelector(indexSrcSelector)
      const inputRef = useRef<HTMLInputElement>(null)
 
 
 
      const open = (page: string) => {
-          options.current.currentPage = `../${page}?rnd={${Math.random()}}`
-          dispatch(fetchSourceIndexData(`../${page}`))
+          options.current.currentPage = page
+          dispatch(fetchSourceIndexData(`../${page}?rnd=${Math.random()}`))
 
-          //@ts-ignore
-         
+     }
+
+     const save = () => {
+          const newDom = options.current.virtualDom?.cloneNode(true)
+          unwrapTextNodes(newDom!)
+          const html = serializeDomToString(newDom!)
+
+
+          dispatch(saveEdits({html, pagename: options.current.currentPage}))
+          console.log(options.current.currentPage);
+          
+
 
      }
 
@@ -70,10 +80,10 @@ export const Editor: FC = () => {
      const parseStringIntoDOM = (dom: string) => {
           const parser = new DOMParser()
           return parser.parseFromString(dom, "text/html");
-        
-          
+
+
      }
-     
+
      const wrapTextNodes = (dom: Document) => {
 
           const body = dom.body as HTMLBodyElement
@@ -114,44 +124,54 @@ export const Editor: FC = () => {
           return dom
      }
 
-     const serializeDomToString = (dom: Document) => {
+     const unwrapTextNodes = (dom: Document | any) => {
+          const customWrapper = dom.body.querySelectorAll('text-editor') as NodeList
+          customWrapper.forEach(elem => {
+               elem.parentNode?.replaceChild(elem.firstChild!, elem)
+          })
+     }
+
+     const serializeDomToString = (dom: Document | Node) => {
           const serializer = new XMLSerializer()
           const stringDom = serializer.serializeToString(dom)
 
-          dispatch(createTemplatePage(stringDom))
+
+          return stringDom
      }
 
      const enableEditing = () => {
           options.current.iframe?.contentDocument?.body.querySelectorAll('text-editor').forEach(t => {
-               if(t){
+               if (t) {
                     t.setAttribute('contenteditable', 'true')
                     t.addEventListener('input', (e) => {
 
                          onTextEdit(t)
-                         
+
                     })
                }
 
           })
-          
+
      }
 
      const onTextEdit = (element: Element) => {
           const id = element.getAttribute('node-id')
           const foundElem = options.current.virtualDom?.body.querySelector(`[node-id="${id}"]`)
-          if(foundElem){
+          if (foundElem) {
                foundElem.innerHTML = element.innerHTML
-
+               
           }
-          
+
      }
 
      const initApp = () => {
           const dom = parseStringIntoDOM(sourceData!)
           const modifiedDom = wrapTextNodes(dom)
           options.current.virtualDom = modifiedDom
-          
-          serializeDomToString(dom)
+
+          dispatch(createTemplatePage(serializeDomToString(dom)))
+
+
           //@ts-ignore
           options.current.iframe.load('../temp.html', () => {
                enableEditing()
@@ -163,8 +183,8 @@ export const Editor: FC = () => {
 
 
      useEffect(() => {
-          if(sourceData) initApp()
-               
+          if (sourceData) initApp()
+
      }, [sourceData])
 
      useEffect(() => {
@@ -194,6 +214,15 @@ export const Editor: FC = () => {
      return (
 
 
-          <EditorView data={{ ...data }} />
+          <>
+
+               <button style={{
+                    position: 'relative',
+                    zIndex: 999999999999
+               }} onClick={save}>Click</button>    
+               <EditorView data={{ ...data }} />
+
+
+          </>
      )
 }
