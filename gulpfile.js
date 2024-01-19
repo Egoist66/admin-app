@@ -1,9 +1,19 @@
 const gulp = require('gulp')
 const webpack = require("webpack-stream");
 const _webpack = require('webpack')
+const path = require('path')
 
-const dist = "/Applications/MAMP/htdocs/react-admin/admin";
+let dist = "";
 // Здесь должен быть путь к папке admin в вашем проекте на локальном сервере
+
+
+if (process.platform === 'win32') {
+    // Путь для операционных систем Windows
+    dist = path.join('C:', 'MAMP', 'htdocs', 'react-admin', 'admin');
+} else {
+    // Путь для других операционных систем (например, Linux, macOS)
+    dist = '/Applications/MAMP/htdocs/react-admin/admin';
+}
 
 gulp.task("copy-html", () => {
     return gulp.src("./app/src/index.html")
