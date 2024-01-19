@@ -120,6 +120,7 @@ const filesSlice = createSlice({
                state.message = action.payload.response
                state.statusCode = action.payload.status
                state.files = !action.payload.files?.length ? [...state.files, ...action.payload.files] : [...action.payload.files]
+
           }),
 
           builder.addCase(deletePages.rejected, (state, action) => {

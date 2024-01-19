@@ -5,6 +5,25 @@ export const useDom = () => {
 
     }
 
+    const injectStyles = (iframe: HTMLIFrameElement | null) => {
+        const style = iframe?.contentDocument?.createElement('style')
+        style!.innerHTML = `
+        
+            text-editor:hover {
+                 outline: 3px solid orange;
+                 outline-offset: 8px;
+            }
+            
+             text-editor:focus {
+                 outline: 3px solid red;
+                 outline-offset: 8px;
+            }
+        
+        `
+
+        iframe?.contentDocument?.head.append(style!)
+    }
+
     const wrapTextNodes = (dom: Document) => {
 
         const body = dom.body as HTMLBodyElement
@@ -54,6 +73,7 @@ export const useDom = () => {
         parseStringIntoDOM,
         wrapTextNodes,
         unwrapTextNodes,
-        serializeDomToString
+        serializeDomToString,
+        injectStyles
     }
 }

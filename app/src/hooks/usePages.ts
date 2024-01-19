@@ -4,14 +4,14 @@ import {createPages, deletePages} from "../store/slice/pagelist-slice";
 import {AppDispatch} from "../store/store";
 import {useDom} from "./useDom";
 
-type EditorStateType = {
+export type OptionsType = {
     currentPage: string,
     iframe: HTMLIFrameElement | null
     virtualDom: Document | null
 }
 
 export const usePages = (dispatch: AppDispatch) => {
-    const options = useRef<EditorStateType>({
+    const options = useRef<OptionsType>({
         currentPage: 'index.html',
         virtualDom: null,
         iframe: null

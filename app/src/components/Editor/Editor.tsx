@@ -1,30 +1,24 @@
-import React, {FC, FormEvent, useCallback, useEffect, useRef} from "react";
+import React, {FC, useEffect} from "react";
 import {EditorView} from "./EditorView";
 import {useAppDispatch, useAppSelector} from "../../store/store";
 import {delay} from '../../utils/delay'
-import {clearMessage, createPages, deletePages, fetchPages, filesSelector} from "../../store/slice/pagelist-slice";
+import {clearMessage, fetchPages, filesSelector} from "../../store/slice/pagelist-slice";
 import "../../helpers/iframeLoader"
-import {createTemplatePage, fetchSourceIndexData, indexSrcSelector, saveEdits} from "../../store/slice/source-slice";
+import {createTemplatePage, fetchSourceIndexData, indexSrcSelector} from "../../store/slice/source-slice";
 import {useDom} from "../../hooks/useDom";
 import {usePages} from "../../hooks/usePages";
+import {useAdmin} from "../../hooks/useAdmin";
 
 
 export const Editor: FC = () => {
     const dispatch = useAppDispatch()
 
-    const {serializeDomToString, parseStringIntoDOM, wrapTextNodes} = useDom()
-    const {
-        options,
-        inputRef,
-        createPage,
-        deletePage,
-        save
-    } = usePages(dispatch)
+    const {serializeDomToString, parseStringIntoDOM, wrapTextNodes, injectStyles} = useDom()
+    const {options, inputRef, createPage, deletePage, save} = usePages(dispatch)
+    const {enableEditing} = useAdmin(options)
 
 
     const {current: {currentPage}} = options
-
-
     const {files, status, message, statusCode} = useAppSelector(filesSelector)
     const {sourceData} = useAppSelector(indexSrcSelector)
 
@@ -32,31 +26,6 @@ export const Editor: FC = () => {
     const open = (page: string) => {
         options.current.currentPage = page
         dispatch(fetchSourceIndexData(`../${page}?rnd=${Math.random()}`))
-
-    }
-
-    const enableEditing = () => {
-        options.current.iframe?.contentDocument?.body.querySelectorAll('text-editor').forEach(t => {
-            if (t) {
-                t.setAttribute('contenteditable', 'true')
-                t.addEventListener('input', (e) => {
-
-                    onTextEdit(t)
-
-                })
-            }
-
-        })
-
-    }
-
-    const onTextEdit = (element: Element) => {
-        const id = element.getAttribute('node-id')
-        const foundElem = options.current.virtualDom?.body.querySelector(`[node-id="${id}"]`)
-        if (foundElem) {
-            foundElem.innerHTML = element.innerHTML
-
-        }
 
     }
 
@@ -79,12 +48,13 @@ export const Editor: FC = () => {
         //@ts-ignore
         options.current.iframe.load('../temp.html', () => {
             enableEditing()
+            injectStyles(options.current.iframe)
+
         })
     }
 
+
     // Side effects
-
-
     useEffect(() => {
         if (sourceData) initApp()
 
@@ -115,7 +85,6 @@ export const Editor: FC = () => {
 
 
     return (
-
 
         <>
 
