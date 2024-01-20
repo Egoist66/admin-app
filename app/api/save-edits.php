@@ -16,17 +16,16 @@ function saveEdits()
           file_put_contents($file, $newhtml);
 
           echo json_encode(array(
-               "status" => 0,
-               "response" => "Изменения сохранены"
+               "statusCode" => 0,
+               "response" => "Изменения сохранены!"
           ));
           http_response_code($httpStatuses["Created"]);
 
-          return;
      } else {
 
           echo json_encode(array(
-               "status" => 1,
-               "response" => "Изменения не были сохранены"
+               "statusCode" => 1,
+               "response" => "Изменения не были сохранены!"
           ));
 
           http_response_code($httpStatuses["OK"]);

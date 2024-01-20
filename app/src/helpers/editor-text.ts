@@ -6,25 +6,28 @@ export class EditorText {
         this.element = element
         this.virtualElement = virtualElement
 
-        this.element.addEventListener('click', () => this.onClick())
-        this.element.addEventListener('blur', () => this.onBlur())
-        this.element.addEventListener('keydown', (e) => this.onKeyDown(e))
-        this.element.addEventListener('input', () => {
-            this.onTextEdit(this.element)
-        })
+        this.element.addEventListener('click', () => this.enableEditing())
+        this.element.addEventListener('blur', () => this.removeEditing())
+        this.element.addEventListener('keydown', (e) => this.stopEditing(e))
+        this.element.addEventListener('input', () => this.onTextEdit(this.element))
+
+        if(this.element?.parentNode?.nodeName === 'A' || this.element?.parentNode?.nodeName === 'BUTTON'){
+            this.element.addEventListener('contextmenu', (e) => this.onCtxMenuEditing(e))
+
+        }
     }
 
-    protected onClick = () => {
+    protected enableEditing = () => {
         this.element.setAttribute('contenteditable', 'true')
         this.element.focus()
     }
 
-    protected onBlur = () => {
+    protected removeEditing = () => {
         this.element.removeAttribute('contenteditable')
         this.element.blur()
     }
 
-    protected onKeyDown = (e: KeyboardEvent) => {
+    protected stopEditing = (e: KeyboardEvent) => {
         if(e.key === 'Enter'){
             this.element.blur()
         }
@@ -34,7 +37,10 @@ export class EditorText {
 
         this.virtualElement.innerHTML = element.innerHTML
 
-
+    }
+    protected onCtxMenuEditing = (e: MouseEvent) => {
+        e.preventDefault()
+        this.enableEditing()
 
     }
 }

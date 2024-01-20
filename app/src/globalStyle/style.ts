@@ -1,9 +1,12 @@
 import { createGlobalStyle } from "styled-components";
 
+
+const panel_height: string = '64px';
 export const GlobalStyle = createGlobalStyle`
+  
 
      body,html {
-          font-family: Arial;
+          font-family: Arial,serif;
      }
 
      .file-name {
@@ -19,9 +22,18 @@ export const GlobalStyle = createGlobalStyle`
      iframe {
           position: absolute;
           width: 100%;
-          height: 100%;
+          height: calc(100vh - ${panel_height});
           left: 0;
-          top: 0;
+          top: ${panel_height};
      }
+     
+     .panel {
+       display: flex;
+       justify-content: flex-end;
+       padding: 12px;
+       height: ${panel_height};
+       border-bottom: 1px solid black;
+     }
+     
 
 `

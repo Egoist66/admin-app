@@ -9,7 +9,6 @@ import {useDom} from "../../hooks/useDom";
 import {usePages} from "../../hooks/usePages";
 import {useAdmin} from "../../hooks/useAdmin";
 
-
 export const Editor: FC = () => {
     const dispatch = useAppDispatch()
 
@@ -20,7 +19,7 @@ export const Editor: FC = () => {
 
     const {current: {currentPage}} = options
     const {files, status, message, statusCode} = useAppSelector(filesSelector)
-    const {sourceData} = useAppSelector(indexSrcSelector)
+    const {sourceData, saveStatus, savedMessage} = useAppSelector(indexSrcSelector)
 
 
     const open = (page: string) => {
@@ -75,10 +74,13 @@ export const Editor: FC = () => {
     const data = {
         status,
         inputRef,
+        save,
         statusCode,
         message,
         currentPage,
         createPage,
+        saveStatus,
+        savedMessage,
         deletePage,
         files
     }
@@ -88,11 +90,6 @@ export const Editor: FC = () => {
 
         <>
 
-            <button style={{
-                position: 'relative',
-                zIndex: 999999999999
-            }} onClick={save}>Click
-            </button>
             <EditorView data={{...data}}/>
 
 

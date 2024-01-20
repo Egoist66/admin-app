@@ -18,6 +18,10 @@ export const useDom = () => {
                  outline: 3px solid red;
                  outline-offset: 8px;
             }
+            
+            .main h1,h2,h3,h4 {
+              overflow: unset !important;
+            }
         
         `
 
