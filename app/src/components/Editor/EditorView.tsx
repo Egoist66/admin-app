@@ -1,9 +1,9 @@
 import React, {FC, FormEvent, forwardRef, memo, RefObject, useEffect} from "react";
 import styled from "styled-components";
 import {ModalWindow} from "../Features/Modal";
-import {Button} from "semantic-ui-react";
 import {useToggle} from "../../hooks/useToggle";
 import {Statuses} from "../../store/slice/source-slice";
+import { Button } from "semantic-ui-react";
 
 
 const StyledEditor = styled.div`

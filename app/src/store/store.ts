@@ -2,14 +2,17 @@ import {configureStore, ThunkDispatch, UnknownAction} from "@reduxjs/toolkit";
 import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import PageListSliceReducer from './slice/pagelist-slice'
 import indexSourceSlice from "./slice/source-slice";
+import appInitSlice from "./slice/app-init-slice";
 
 
 export const store = configureStore({
     reducer: {
         pageList: PageListSliceReducer,
-        indexSrc: indexSourceSlice
+        indexSrc: indexSourceSlice,
+        appInit: appInitSlice
     }
 })
+
 
 
 export type AppRootState = ReturnType<typeof store.getState>

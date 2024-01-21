@@ -6,7 +6,6 @@ const path = require('path')
 let dist = "";
 // Здесь должен быть путь к папке admin в вашем проекте на локальном сервере
 
-
 if (process.platform === 'win32') {
     // Путь для операционных систем Windows
     dist = path.join('C:', 'MAMP', 'htdocs', 'react-admin', 'admin');
@@ -39,10 +38,10 @@ gulp.task("build-js", () => {
                             options: {
                                 configFile: './.babelrc',
                                 presets: [['@babel/preset-env', {
-                                        debug: true,
-                                        corejs: 3,
-                                        useBuiltIns: "usage"
-                                    }],
+                                    debug: true,
+                                    corejs: 3,
+                                    useBuiltIns: "usage"
+                                }],
                                     "@babel/react",
                                     "@babel/preset-typescript",
 
@@ -71,12 +70,12 @@ gulp.task("build-js", () => {
 
 gulp.task("copy-api", () => {
     return gulp.src("./app/api/**/*.*")
-                .pipe(gulp.dest(dist + "/api"));
+        .pipe(gulp.dest(dist + "/api"));
 });
 
 gulp.task("copy-assets", () => {
     return gulp.src("./app/assets/**/*.*")
-                .pipe(gulp.dest(dist + "/assets"));
+        .pipe(gulp.dest(dist + "/assets"));
 });
 
 gulp.task("watch", () => {

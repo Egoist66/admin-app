@@ -8,6 +8,9 @@ dependencies:
   '@reduxjs/toolkit':
     specifier: ^2.0.1
     version: 2.0.1(react-redux@9.0.4)(react@18.2.0)
+  '@uidotdev/usehooks':
+    specifier: ^2.4.1
+    version: 2.4.1(react-dom@18.2.0)(react@18.2.0)
   axios:
     specifier: ^1.6.4
     version: 1.6.4
@@ -1945,6 +1948,17 @@ packages:
     dependencies:
       '@types/node': 20.10.6
     dev: true
+
+  /@uidotdev/usehooks@2.4.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-1I+RwWyS+kdv3Mv0Vmc+p0dPYH0DTRAo04HLyXReYBL9AeseDWUJyi4THuksBJcu9F0Pih69Ak150VDnqbVnXg==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      react: '>=18.0.0'
+      react-dom: '>=18.0.0'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
 
   /@webassemblyjs/ast@1.11.6:
     resolution: {integrity: sha512-IN1xI7PwOvLPgjcf180gC1bqn3q/QaOCwYUahIOhbYUu8KA/3tw2RT/T0Gidi1l7Hhj5D/INhJxiICObqpMu4Q==}

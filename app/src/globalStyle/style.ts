@@ -19,12 +19,24 @@ export const GlobalStyle = createGlobalStyle`
           margin-top: 10px;
      }
 
+     .loader-custom {
+          z-index: 999999999999999 !important;
+     }
+
      iframe {
           position: absolute;
           width: 100%;
           height: calc(100vh - ${panel_height});
           left: 0;
           top: ${panel_height};
+     }
+
+     .ui.dimmer {
+          background-color: #0067b4 !important;
+     }
+
+     div.modals.dimmer {
+          background-color: #000000e0 !important;
      }
      
      .panel {
