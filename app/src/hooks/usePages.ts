@@ -1,7 +1,7 @@
 import {saveEdits} from "../store/slice/source-slice";
 import {FormEvent, useCallback, useRef} from "react";
 import {createPages, deletePages} from "../store/slice/pagelist-slice";
-import {AppDispatch} from "../store/store";
+import {AppDispatch, useAppDispatch} from "../store/store";
 import {useDom} from "./useDom";
 
 export type OptionsType = {
@@ -10,7 +10,8 @@ export type OptionsType = {
     virtualDom: Document | null
 }
 
-export const usePages = (dispatch: AppDispatch) => {
+export const usePages = () => {
+    const dispatch = useAppDispatch()
     const options = useRef<OptionsType>({
         currentPage: 'index.html',
         virtualDom: null,

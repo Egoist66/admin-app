@@ -28,8 +28,7 @@ export const Editor: FC = () => {
     wrapTextNodes,
     injectStyles,
   } = useDom();
-  const { options, inputRef, createPage, deletePage, save } =
-    usePages(dispatch);
+  const { options, inputRef, createPage, deletePage, save } = usePages();
   const { enableEditing } = useAdmin(options);
 
   const {current: { currentPage }} = options;
@@ -58,7 +57,9 @@ export const Editor: FC = () => {
   };
 
 
-  const initEditor = async () => {
+
+  const initEditor = () => {
+    dispatch(appInitAction({ status: "initializing" }));
     const dom = parseStringIntoDOM(sourceData!);
     options.current.virtualDom = wrapTextNodes(dom);
 
@@ -66,42 +67,32 @@ export const Editor: FC = () => {
 
     try {
   
-      
       //@ts-ignore
-      options?.current?.iframe?.load("../$randTmp-page01.html", async () => {
+      options?.current?.iframe?.load("../$randTmp-page01.html", () => {
         enableEditing();
         injectStyles(options.current.iframe)
     
-        deletePage('$randTmp-page01.html')
-        
+ 
+        dispatch(appInitAction({ status: "settled" }));
+        delay(500).then(() => {
+           dispatch(appInitAction({ status: "idle" }));
+        })
       });
     } catch (e) {
       console.log(e);
     }
   };
 
-  useEffect(() => {
-    init(null, options.current.currentPage, true);
-
-  }, [])
 
   // Side effects
+
+  
 
   useEffect(() => {
 
     if (sourceData) {
       initEditor();
 
-      delay(1000)
-        .then(() => {
-          dispatch(appInitAction({ status: "settled" }));
-        })
-        .then(() => {
-          delay(500).then(() => {
-            dispatch(appInitAction({ status: "idle" }));
-          })
-        
-        })
 
     }
   }, [sourceData]);
@@ -123,7 +114,9 @@ export const Editor: FC = () => {
     statusCode,
     message,
     currentPage,
+    sourceData,
     createPage,
+    initEditor,
     saveStatus,
     savedMessage,
     deletePage,
@@ -132,7 +125,7 @@ export const Editor: FC = () => {
 
   return (
     <>
-      <EditorView  data={{ ...data }} />
+      <EditorView data={{ ...data }} />
     </>
   );
 };

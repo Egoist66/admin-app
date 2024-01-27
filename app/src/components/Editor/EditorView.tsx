@@ -10,8 +10,8 @@ import styled from "styled-components";
 import { ModalWindow } from "../Features/Modal";
 import { useToggle } from "../../hooks/useToggle";
 import { Statuses } from "../../store/slice/source-slice";
-import { Button, List, ListContent, ListHeader, ListItem, Progress, Segment } from "semantic-ui-react";
 import { PagesList } from "../Features/PagesList";
+import { Button, Progress } from "semantic-ui-react";
 
 const StyledEditor = styled.div``;
 
@@ -20,6 +20,8 @@ type EditorViewProps = {
     files: string[];
     init: (e: MouseEvent | null, page: string, mount: boolean) => void
     savedMessage: string;
+    initEditor: () => void
+    sourceData: string | null
     save: () => void;
     currentPage: string;
     deletePage: (page: string) => void;
@@ -34,6 +36,7 @@ type EditorViewProps = {
 export const EditorView: FC<EditorViewProps> = memo(
   forwardRef(({ data }) => {
     EditorView.displayName = "EditorView";
+
     const { setOpen: setOpenEdits, isToggled: isEditsOpen } = useToggle();
     const { setOpen: setOpenConfirm, isToggled: isConfirmOpen } = useToggle();
 
@@ -44,6 +47,8 @@ export const EditorView: FC<EditorViewProps> = memo(
       deletePage,
       inputRef,
       init,
+      initEditor,
+      sourceData,
       statusCode,
       saveStatus,
       savedMessage,
@@ -52,6 +57,17 @@ export const EditorView: FC<EditorViewProps> = memo(
     } = data;
 
    
+    useEffect(() => {
+     
+      
+      init(null, currentPage, true);
+      if(sourceData){
+        initEditor()
+      }
+  
+    }, [currentPage, sourceData])
+
+
 
     useEffect(() => {
       if (status === "resolved") {
@@ -74,7 +90,7 @@ export const EditorView: FC<EditorViewProps> = memo(
 
                {message ? <p>{message}</p>: null}
                {pages} */}
-        <iframe src={currentPage} frameBorder="0"></iframe>
+        <iframe  src={currentPage} frameBorder="0"></iframe>
 
         <div className={"panel"}>
           <Button primary onClick={() => setOpenEdits(true)}>

@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import { FC } from "react";
 import {
   Segment,
@@ -8,6 +8,8 @@ import {
   ListHeader,
   Button,
 } from "semantic-ui-react";
+import { delay } from "../../utils/delay";
+import { usePages } from "../../hooks/usePages";
 
 
 type PageListProps = {
@@ -16,8 +18,9 @@ type PageListProps = {
     redirect: (e: any | null, page: string, mount: boolean) => void
 }
 
-export const PagesList: FC<PageListProps> = ({ files, redirect, deletePage }) => {
+export const PagesList: FC<PageListProps> = memo(({ files, redirect, deletePage }) => {
   const pages = files.filter(item => !item.startsWith('$randTmp-page01'))
+
 
 
   return (
@@ -27,9 +30,7 @@ export const PagesList: FC<PageListProps> = ({ files, redirect, deletePage }) =>
 
         
                 <ListContent className="file-name" key={index}>
-                <a onClick={(e) => {
-                    redirect(e, p, false)
-                }}  href={'#'}>{p}</a>
+                <a onClick={(e) => redirect(e, p, false)}  href={'#'}>{p}</a>
                     <ListHeader>
                     <a
                         style={{ color: "white" }}
@@ -50,4 +51,4 @@ export const PagesList: FC<PageListProps> = ({ files, redirect, deletePage }) =>
         ))}
     </List>
   );
-}
+})
