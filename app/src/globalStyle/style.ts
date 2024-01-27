@@ -46,6 +46,18 @@ export const GlobalStyle = createGlobalStyle`
        height: ${panel_height};
        border-bottom: 1px solid black;
      }
+
+     .page-item div {
+          justify-content: space-between !important;
+     }
+
+     .ui.modal>.actions {
+          border: none !important;
+     }
+
+     .progress {
+          border-radius: 0px !important;
+     }
      
 
 `

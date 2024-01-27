@@ -4,43 +4,62 @@ import {delay} from "../../utils/delay";
 import {Statuses} from "../../store/slice/source-slice";
 
 type ModalProps = {
-    onClickHandler: () => void
-    saveStatus: Statuses
-    savedMessage: string
+    operationStatus: Statuses
+    description: ReactNode
+    buttons: Array<{type: 'cancel' | 'update', name: string, handler: (arg?: any) => void}>
+    render?: (...data: any) => ReactNode
+    _message: string
+    _messageDefault: string
+    response: ({_message, hint}: {_message: string, hint?: string}) => ReactNode
     open: boolean
     setOpen: (isOpen: boolean) => void
 }
-export const ModalWindow: FC<ModalProps> = memo(({onClickHandler, savedMessage, open, setOpen, saveStatus}) => {
-    const [message, setMessage] = useState<ReactNode | string>('Сохранение')
+export const ModalWindow: FC<ModalProps> = memo(({
+    response,
+    _message,
+    _messageDefault,
+    description,
+    render,
+    buttons,
+    open, 
+    setOpen,
+    operationStatus}) => {
+        
+    const [message, setMessage] = useState<ReactNode | string>(_messageDefault)
 
 
     useEffect(() => {
-        switch (saveStatus) {
+        switch (operationStatus) {
             case Statuses.PENDING:
-                setMessage('Обновление...')
+                setMessage(response({_message}))
                 break
             case Statuses.RESOLVED:
-                setMessage(<span style={{color: '#2185D0'}}>{savedMessage}</span>)
+                setMessage(<span>{response({_message, hint: '#2185D0'})}</span>)
                 break
             case Statuses.REJECTED:
-                setMessage(<span style={{color: 'red'}}>{savedMessage}</span>)
+                setMessage(<span>{response({_message, hint: 'red'})}</span>)
                 break
             default:
-                setMessage('Сохранение')
+                setMessage(_messageDefault)
         }
 
 
-    }, [saveStatus])
+    }, [operationStatus])
 
     useEffect(() => {
-        if (saveStatus === Statuses.RESOLVED) {
+        if (operationStatus === Statuses.RESOLVED) {
             delay(1000).then(() => {
-                setMessage('Сохранение')
+                setMessage(_messageDefault)
 
                 setOpen(false)
             })
         }
-    }, [saveStatus])
+    }, [operationStatus, message])
+
+    Modal.displayName = 'AdminModal'
+
+
+
     return (
         <Transition  visible={open} animation='zoom' duration={500}>
 
@@ -50,16 +69,24 @@ export const ModalWindow: FC<ModalProps> = memo(({onClickHandler, savedMessage, 
                 open={open}
                 onClose={() => setOpen(false)}
             >
-                <ModalHeader>{message}</ModalHeader>
-                <ModalContent>
-                    <ModalDescription>
-                        Уверены сохранить изменения?
-                    </ModalDescription>
-                </ModalContent>
+                {render ? render(message, description, buttons, open) :
+                  <>
+                  
+                   <ModalHeader>{message}</ModalHeader>
+                        <ModalContent>
+                            <ModalDescription>
+                                {description}
+                        </ModalDescription>
+                   </ModalContent>
+                  
+                  </>
+                }
                 <ModalActions>
-                    <Button disabled={saveStatus === Statuses.PENDING} loading={saveStatus === Statuses.PENDING} primary
-                            onClick={onClickHandler}>Опубликовать</Button>
-                    <Button onClick={() => setOpen(false)}>Отменить</Button>
+                    {buttons.map(btn => (
+                        <Button key={btn.name} disabled={btn.type === 'update' && operationStatus === Statuses.PENDING} loading={btn.type === 'update' && operationStatus === Statuses.PENDING} primary
+                        onClick={btn.handler}>{btn.name}</Button>
+               
+                    ))}
                 </ModalActions>
             </Modal>
 

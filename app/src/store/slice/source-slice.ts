@@ -121,6 +121,7 @@ const indexSourceSlice = createSlice({
 
         builder.addCase(saveEdits.pending, (state) => {
             state.saveStatus = Statuses.PENDING
+            state.savedMessage = 'Обновление...'
             state.statusCode = 2
 
         }),

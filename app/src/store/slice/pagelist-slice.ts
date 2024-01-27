@@ -78,7 +78,14 @@ const filesSlice = createSlice({
 
           builder.addCase(fetchPages.fulfilled, (state, action: PayloadAction<string[]>) => {
                state.status = 'resolved';
-               state.files = [...state.files, ...action.payload]
+               if(state.files.every((item, i) => item === action.payload[i])){
+                    state.files = [...action.payload]
+                  
+               }
+               else {
+                    state.files = [...state.files, ...action.payload]
+               }
+               
 
           }),
 

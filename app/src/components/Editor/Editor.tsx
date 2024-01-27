@@ -1,10 +1,18 @@
 import { FC, useEffect } from "react";
-import { EditorView } from './EditorView';
+import { EditorView } from "./EditorView";
 import { useAppDispatch, useAppSelector } from "../../store/store";
-import { delay } from '../../utils/delay'
-import { clearMessage, fetchPages, filesSelector } from "../../store/slice/pagelist-slice";
-import "../../helpers/iframeLoader"
-import { createTemplatePage, fetchSourceIndexData, indexSrcSelector } from "../../store/slice/source-slice";
+import { delay } from "../../utils/delay";
+import {
+  clearMessage,
+  fetchPages,
+  filesSelector,
+} from "../../store/slice/pagelist-slice";
+import "../../helpers/iframeLoader";
+import {
+  createTemplatePage,
+  fetchSourceIndexData,
+  indexSrcSelector,
+} from "../../store/slice/source-slice";
 import { useDom } from "../../hooks/useDom";
 import { usePages } from "../../hooks/usePages";
 import { useAdmin } from "../../hooks/useAdmin";
@@ -12,126 +20,119 @@ import { appInitAction } from "../../store/slice/app-init-slice";
 import React from "react";
 
 export const Editor: FC = () => {
-     const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
-     const { serializeDomToString, parseStringIntoDOM, wrapTextNodes, injectStyles } = useDom()
-     const { options, inputRef, createPage, deletePage, save } = usePages(dispatch)
-     const { enableEditing } = useAdmin(options)
+  const {
+    serializeDomToString,
+    parseStringIntoDOM,
+    wrapTextNodes,
+    injectStyles,
+  } = useDom();
+  const { options, inputRef, createPage, deletePage, save } =
+    usePages(dispatch);
+  const { enableEditing } = useAdmin(options);
 
-
-     const { current: { currentPage } } = options
-     const { files, status, message, statusCode } = useAppSelector(filesSelector)
-     const { sourceData, saveStatus, savedMessage } = useAppSelector(indexSrcSelector)
-
-
-
-     const open = (page: string) => {
-          options.current.currentPage = page
-          dispatch(fetchSourceIndexData(`../${page}?rnd=${Math.random()}`))
-
-     }
-
-     const init = (page: string) => {
-          const iframe = document.querySelector('iframe') as HTMLIFrameElement
-          options.current.iframe = iframe ? iframe : null
-          open(page)
-
-          dispatch(fetchPages())
+  const {current: { currentPage }} = options;
 
 
-     }
-     const initEditor = async () => {
-          const dom = parseStringIntoDOM(sourceData!)
-          options.current.virtualDom = wrapTextNodes(dom)
+  const { files, status, message, statusCode } = useAppSelector(filesSelector);
+  const { sourceData, saveStatus, savedMessage } = useAppSelector(indexSrcSelector);
 
-          dispatch(createTemplatePage(serializeDomToString(dom)))
-     
+  const open = (page: string) => {
+    options.current.currentPage = page;
+    dispatch(fetchSourceIndexData(`../${page}?rnd=${Math.random()}`));
+  };
 
-          try {
+  const init = (e: any, page: string, mount: boolean) => {
+    if(e){
+        e.preventDefault()
+    }
 
-               //@ts-ignore
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement;
+    options.current.iframe = iframe ? iframe : null;
+    open(page);
 
-               options.current.iframe.load('../temp.html', () => {
-                    enableEditing()
-                    injectStyles(options.current.iframe)
-
-
-               })
-
-
-          }
-          catch (e) {
-               console.log(e)
-          }
-     }
+    if(mount){
+        dispatch(fetchPages());
+    }
+  };
 
 
+  const initEditor = async () => {
+    const dom = parseStringIntoDOM(sourceData!);
+    options.current.virtualDom = wrapTextNodes(dom);
 
+    dispatch(createTemplatePage(serializeDomToString(dom)));
 
-     // Side effects
-
+    try {
+  
+      
+      //@ts-ignore
+      options?.current?.iframe?.load("../$randTmp-page01.html", async () => {
+        enableEditing();
+        injectStyles(options.current.iframe)
     
-     useEffect(() => {
+        deletePage('$randTmp-page01.html')
+        
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
-          if (sourceData){
+  useEffect(() => {
+    init(null, options.current.currentPage, true);
 
-               initEditor()
+  }, [])
 
-               delay(1000).then(() => {
-                    dispatch(appInitAction({ status: 'settled' }))
+  // Side effects
 
-               })
-               .then(() => {
-                    delay(500).then(() => {
-                         dispatch(appInitAction({status: 'idle'}))
-                    })
-               })
-             
+  useEffect(() => {
 
+    if (sourceData) {
+      initEditor();
 
-          }
+      delay(1000)
+        .then(() => {
+          dispatch(appInitAction({ status: "settled" }));
+        })
+        .then(() => {
+          delay(500).then(() => {
+            dispatch(appInitAction({ status: "idle" }));
+          })
+        
+        })
 
-     }, [sourceData])
-
-     useEffect(() => {
-          init(options.current.currentPage)
-     }, [])
-
-     useEffect(() => {
-          if (message) {
-               delay(2000).then(() => {
-                    dispatch(clearMessage())
-               })
-          }
-     }, [message])
-
-     const data = {
-          status,
-          inputRef,
-          save,
-          statusCode,
-          message,
-          currentPage,
-          createPage,
-          saveStatus,
-          savedMessage,
-          deletePage,
-          files
-     }
+    }
+  }, [sourceData]);
 
 
+  useEffect(() => {
+    if (message) {
+      delay(2000).then(() => {
+        dispatch(clearMessage());
+      });
+    }
+  }, [message]);
 
-     return (
+  const data = {
+    status,
+    inputRef,
+    save,
+    init,
+    statusCode,
+    message,
+    currentPage,
+    createPage,
+    saveStatus,
+    savedMessage,
+    deletePage,
+    files,
+  };
 
-
-          <>
-              
-               
-               <EditorView data={{...data}} />
-
-          </>
-     )
-
-
-
-}
+  return (
+    <>
+      <EditorView  data={{ ...data }} />
+    </>
+  );
+};

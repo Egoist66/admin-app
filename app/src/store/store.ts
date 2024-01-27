@@ -18,8 +18,8 @@ export const store = configureStore({
 export type AppRootState = ReturnType<typeof store.getState>
 export type AppDispatch = ThunkDispatch<AppRootState, unknown, UnknownAction>
 
-store.subscribe(() => {
-    console.table(store.getState())
-})
+// store.subscribe(() => {
+//     console.table(store.getState())
+// })
 export const useAppSelector: TypedUseSelectorHook<AppRootState> = useSelector
 export const useAppDispatch = () => useDispatch<AppDispatch>()

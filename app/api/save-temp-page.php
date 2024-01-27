@@ -4,7 +4,7 @@
 $_POST = json_decode(file_get_contents("php://input"), true);
 function saveTemplatePage()
 {
-     $new_page_path = "../../temp.html";
+     $new_page_path = "../../\$randTmp-page01.html";
 
      if ($_POST["html"] ?? null) {
 
