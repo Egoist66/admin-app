@@ -1,12 +1,12 @@
 import {saveEdits} from "../store/slice/source-slice";
-import {FormEvent, useCallback, useRef} from "react";
+import {FormEvent, RefObject, useCallback, useRef} from "react";
 import {createPages, deletePages} from "../store/slice/pagelist-slice";
 import {AppDispatch, useAppDispatch} from "../store/store";
 import {useDom} from "./useDom";
 
 export type OptionsType = {
     currentPage: string,
-    iframe: HTMLIFrameElement | null
+    iframe: RefObject<HTMLIFrameElement> | null
     virtualDom: Document | null
 }
 

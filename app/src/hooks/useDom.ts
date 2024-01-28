@@ -1,3 +1,5 @@
+import { RefObject } from "react";
+
 export const useDom = () => {
     const parseStringIntoDOM = (dom: string) => {
         const parser = new DOMParser()
@@ -5,8 +7,8 @@ export const useDom = () => {
 
     }
 
-    const injectStyles = (iframe: HTMLIFrameElement | null) => {
-        const style = iframe?.contentDocument?.createElement('style')
+    const injectStyles = (iframe: RefObject<HTMLIFrameElement> | null) => {
+        const style = iframe!.current!.contentDocument?.createElement('style')
         style!.innerHTML = `
         
             text-editor:hover {
@@ -27,7 +29,7 @@ export const useDom = () => {
         
         `
 
-        iframe?.contentDocument?.head.append(style!)
+        iframe?.current!.contentDocument?.head.append(style!)
     }
 
     const wrapTextNodes = (dom: Document) => {

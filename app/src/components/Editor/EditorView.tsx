@@ -1,154 +1,104 @@
 import React, {
   FC,
   FormEvent,
-  forwardRef,
-  memo,
-  RefObject,
   useEffect,
+  useRef,
+  useState,
 } from "react";
 import styled from "styled-components";
-import { ModalWindow } from "../Features/Modal";
-import { useToggle } from "../../hooks/useToggle";
-import { Statuses } from "../../store/slice/source-slice";
-import { PagesList } from "../Features/PagesList";
-import { Button, Progress } from "semantic-ui-react";
+import { delay } from "../../utils/delay";
+import { adminAPI } from "../../../api/service/admin-api";
 
 const StyledEditor = styled.div``;
 
-type EditorViewProps = {
-  data: {
-    files: string[];
-    init: (e: MouseEvent | null, page: string, mount: boolean) => void
-    savedMessage: string;
-    initEditor: () => void
-    sourceData: string | null
-    save: () => void;
-    currentPage: string;
-    deletePage: (page: string) => void;
-    inputRef: RefObject<HTMLInputElement>;
-    statusCode: 0 | 1;
-    createPage: (e: FormEvent<HTMLFormElement>) => void;
-    status: "resolved" | "pending" | "rejected" | null;
-    saveStatus: Statuses;
-  };
-};
 
-export const EditorView: FC<EditorViewProps> = memo(
-  forwardRef(({ data }) => {
-    EditorView.displayName = "EditorView";
+type EditorViewType = {
+  files: string[]
+  newPage: string
+  status: 0 | 1
+  response: string
+}
 
-    const { setOpen: setOpenEdits, isToggled: isEditsOpen } = useToggle();
-    const { setOpen: setOpenConfirm, isToggled: isConfirmOpen } = useToggle();
+export const EditorView: FC = () => {
 
-    const {
-      files,
-      save,
-      currentPage,
-      deletePage,
-      inputRef,
-      init,
-      initEditor,
-      sourceData,
-      statusCode,
-      saveStatus,
-      savedMessage,
-      createPage,
-      status,
-    } = data;
-
-   
-    useEffect(() => {
-     
-      
-      init(null, currentPage, true);
-      if(sourceData){
-        initEditor()
-      }
+  const [state, setState] = useState<EditorViewType>({
+   files: [],
+   newPage: '',
+   status: 0, 
+   response: ''
   
-    }, [currentPage, sourceData])
+  })
 
+  const loadPages = () => {
+    adminAPI.loadPageList()
+      .then(pages => setState({...state, files: pages}))
+      .catch((e) => console.log(e))
+  }
 
+  const createPage = (e: FormEvent) => {
+    e.preventDefault()
 
-    useEffect(() => {
-      if (status === "resolved") {
-        if (statusCode === 0) {
-          if (inputRef.current) {
-            inputRef.current.value = "";
-          }
-        }
-      }
-    }, [status]);
+    adminAPI.createNewPage(state.newPage)
+      .then(data => {
+         setState((state) => ({
+           ...state,
+           files: data?.files?.length ? [...data.files]: [...state.files],
+           status: data.status,
+           response: data.response
+         }))
+      })
+      .catch((e) => {
+        console.log(e);
+        
+      })
+  }
 
+  const deletePage = (page: string) => {
+    adminAPI.deletePage(page)
+    .then(data => {
+      setState((state) => ({
+        ...state,
+        status: data.status,
+        response: data.response,
+      }))
+      
+    })
+    .then(loadPages)
+    .catch((e) => {
+      console.log(e);
+      
+    })
+  }
+
+  useEffect(() => {
+     loadPages()
+      
+  }, [])
+
+  const pages = state.files.map(p => (
+    <div key={p}>
+      <h2>{p}</h2>
+      <button onClick={() => deletePage(p)}>Delete</button>
+    </div>
+  ))
     return (
       <StyledEditor>
-        {/*
+        
                <form onSubmit={createPage}>
-                    <input data-value={inputRef?.current?.value} name='filename' ref={inputRef} type="text" />
-                    <button disabled={status === 'pending'} type="submit">Создать новую страницу</button>
+                    <input onChange={(e) => setState({...state, newPage: e.currentTarget.value})} data-value={state.newPage} name='filename' type="text" />
+                    <button  type="submit">Создать новую страницу</button>
 
                </form>
 
-               {message ? <p>{message}</p>: null}
-               {pages} */}
-        <iframe  src={currentPage} frameBorder="0"></iframe>
+               {pages}
 
-        <div className={"panel"}>
-          <Button primary onClick={() => setOpenEdits(true)}>
-            Сохранить
-          </Button>
-          <Button primary onClick={() => setOpenConfirm(true)}>
-            Открыть
-          </Button>
-        </div>
 
-        <ModalWindow
-          _messageDefault="Сохранение"
-          description={"Уверены сохранить изменения?"}
-          buttons={[
-            { type: "update", name: "Опубликовать", handler: save },
-            {
-              type: "cancel",
-              name: "Отменить",
-              handler: () => setOpenEdits(false),
-            },
-          ]}
-          response={({ _message, hint }) => (
-            <span style={{ color: hint }}>{_message}</span>
-          )}
-          operationStatus={saveStatus}
-          open={isEditsOpen}
-          _message={savedMessage}
-          setOpen={setOpenEdits}
-        />
+          {/* <iframe  src={'/'} frameBorder="0"></iframe> */}
 
-        <ModalWindow
-          _messageDefault="Перейти"
-          description={"Открыть другие страницы?"}
-          buttons={[
-            {
-              type: "cancel",
-              name: "Отменить",
-              handler: () => setOpenConfirm(false),
-            },
-          ]}
-          response={({ _message, hint }) => (
-            <span style={{ color: hint }}>{_message}</span>
-          )}
-          operationStatus={saveStatus}
-          open={isConfirmOpen}
-          render={(message, descr) => (
-            <>
-                {status === 'pending' ? <Progress  active={status === 'pending'} size="small" color="blue" percent={100} /> : null}
-               <PagesList redirect={init} files={files} deletePage={deletePage} /> 
-            
-            
-            
-            </>
-          )}
-          _message={savedMessage}
-          setOpen={setOpenConfirm}
-        />
+       
+
       </StyledEditor>
     );
-  })
-);
+  
+
+}
