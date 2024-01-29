@@ -8,7 +8,7 @@ function saveEdits()
      global $httpStatuses;
 
 
-     $file = "../../" . $_POST["pagename"];
+     $file = "../../" . $_POST["page"];
      $newhtml = $_POST["html"];
 
      if ($newhtml && file_exists($file)) {
@@ -16,7 +16,7 @@ function saveEdits()
           file_put_contents($file, $newhtml);
 
           echo json_encode(array(
-               "statusCode" => 0,
+               "status" => 0,
                "response" => "Изменения сохранены!"
           ));
           http_response_code($httpStatuses["Created"]);
@@ -24,7 +24,7 @@ function saveEdits()
      } else {
 
           echo json_encode(array(
-               "statusCode" => 1,
+               "status" => 1,
                "response" => "Изменения не были сохранены!"
           ));
 

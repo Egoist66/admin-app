@@ -11,7 +11,7 @@ function saveTemplatePage()
           file_put_contents($new_page_path, $_POST["html"]);
 
           echo json_encode(array(
-               "statusCode" => 0,
+               "status" => 0,
                "response" => "Шаблон успешно создан"
           ));
           http_response_code(201);
@@ -20,7 +20,7 @@ function saveTemplatePage()
      } else {
 
           echo json_encode(array(
-               "statusCode" => 1,
+               "status" => 1,
                "response" => "Ошибка создания шаблона"
           ));
 

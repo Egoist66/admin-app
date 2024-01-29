@@ -20,5 +20,20 @@ export const adminAPI = {
      async deletePage(page: string){
           const {data} = await axios.post<Omit<APIResponse, 'files'>>('./api/delete-page.php', {name: page})
           return data
+     },
+
+     async loadSource(page: string){
+          const {data} = await axios.get<string>(`../${page}?rnd=${Math.random()}`)
+          return data
+     },
+
+     async saveTemplate(html: string){
+          const {data} = await axios.post<Omit<APIResponse, 'files'>>('./api/save-temp-page.php', {html})
+          return data
+     },
+
+     async saveEdit(page: string, html: string){
+          const {data} = await axios.post<Omit<APIResponse, 'files'>>('./api/save-edits.php', {page, html})
+          return data
      }
 }

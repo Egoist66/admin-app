@@ -9,7 +9,6 @@ import {
   Button,
 } from "semantic-ui-react";
 import { delay } from "../../utils/delay";
-import { usePages } from "../../hooks/usePages";
 
 
 type PageListProps = {

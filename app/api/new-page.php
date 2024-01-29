@@ -8,7 +8,7 @@ function createNewPage()
 {
      global $name;
 
-          $new_page_path = "../../" . $name['name'] . ".html";
+     $new_page_path = "../../" . $name['name'] . ".html";
 
           if (file_exists($new_page_path)) {
                echo json_encode(array(

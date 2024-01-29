@@ -1,7 +1,7 @@
 import React, {FC, memo, ReactNode, useEffect, useState} from "react";
 import {Button, Modal, ModalActions, ModalContent, ModalDescription, ModalHeader, Transition} from "semantic-ui-react";
 import {delay} from "../../utils/delay";
-import {Statuses} from "../../store/slice/source-slice";
+import { Statuses } from "../../hooks/useCatchUI";
 
 type ModalProps = {
     operationStatus: Statuses
@@ -30,13 +30,13 @@ export const ModalWindow: FC<ModalProps> = memo(({
 
     useEffect(() => {
         switch (operationStatus) {
-            case Statuses.PENDING:
+            case Statuses.LOADING:
                 setMessage(response({_message}))
                 break
             case Statuses.RESOLVED:
                 setMessage(<span>{response({_message, hint: '#2185D0'})}</span>)
                 break
-            case Statuses.REJECTED:
+            case Statuses.ERROR:
                 setMessage(<span>{response({_message, hint: 'red'})}</span>)
                 break
             default:
@@ -83,7 +83,7 @@ export const ModalWindow: FC<ModalProps> = memo(({
                 }
                 <ModalActions>
                     {buttons.map(btn => (
-                        <Button key={btn.name} disabled={btn.type === 'update' && operationStatus === Statuses.PENDING} loading={btn.type === 'update' && operationStatus === Statuses.PENDING} primary
+                        <Button key={btn.name} disabled={btn.type === 'update' && operationStatus === Statuses.LOADING} loading={btn.type === 'update' && operationStatus === Statuses.LOADING} primary
                         onClick={btn.handler}>{btn.name}</Button>
                
                     ))}

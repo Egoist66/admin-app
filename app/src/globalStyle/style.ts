@@ -43,7 +43,6 @@ export const GlobalStyle = createGlobalStyle`
        display: flex;
        justify-content: flex-end;
        padding: 12px;
-       height: ${panel_height};
        border-bottom: 1px solid black;
      }
 
