@@ -4,7 +4,7 @@ import { adminAPI } from "../../api/service/admin-api";
 import { EditorText } from "../helpers/editor-text";
 import { useAdmin } from "./useAdmin";
 import { useAppDispatch } from "../../store/store";
-import { setEditing, Statuses } from '../../store/app-ui-action-slice';
+import { setApp, setEditing, Statuses } from '../../store/app-ui-action-slice';
 import { delay } from "../utils/delay";
 
 export type OptionsType = {
@@ -91,6 +91,7 @@ export const useEditor = () => {
   }
 
   const fetchSrc = (page: string) => {
+    dispatch(setApp(Statuses.LOADING))
 
     adminAPI.loadSource(page)
       .then(data => parseStringIntoDOM(data))
@@ -102,7 +103,6 @@ export const useEditor = () => {
       .then(serializeDomToString)
       .then((html) => {
         adminAPI.saveTemplate(html)
-          .then(data => data)
           .then((data) => {
             //@ts-ignore
             options?.current?.iframe?.load('../$randTmp-page01.html', () => {
@@ -110,7 +110,8 @@ export const useEditor = () => {
 
               enableEditig(options.current.iframe?.contentDocument?.body!, options.current.virtualDom!)
               injectStyles(options.current.iframe)
-
+             
+              dispatch(setApp(Statuses.RESOLVED))
             })
           })
 

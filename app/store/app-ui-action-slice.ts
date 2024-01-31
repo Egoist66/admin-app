@@ -47,6 +47,11 @@ const AppUISlice = createSlice({
     name: 'app-ui-slice',
     initialState,
     reducers: {
+
+        setApp(state, action: PayloadAction<Statuses>){
+            state.app.status = action.payload
+        },
+
         setCreating(state, action: PayloadAction<{statusCode?: 0 | 1, response?: string, status: Statuses}>){
             state.editor.creating = {
                 response: action.payload.response,
@@ -92,6 +97,7 @@ const AppUISlice = createSlice({
 
 export default AppUISlice.reducer
 export const {
+    setApp,
     setCreating,
     setDeleting,
     setFetching,
