@@ -1,10 +1,8 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, lazy, useEffect } from "react";
 import { EditorView } from "../Editor/EditorView";
 
 
-
-
-export const App: FC = () => {
+const AppView: FC = () => {
 
 
 
@@ -16,3 +14,5 @@ export const App: FC = () => {
      )
      
 }
+
+export default AppView

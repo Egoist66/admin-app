@@ -1,18 +1,19 @@
 import {createRoot} from "react-dom/client";
-import {App} from "./components/App/App";
 import React from "react";
 import {GlobalStyle} from "./globalStyle/style";
-import '../../node_modules/uikit/dist/css/uikit.min.css'
+import { Provider } from "react-redux";
+import { store } from "../store/store";
+import { AppContainer } from "./components/App/AppContainer";
 
 const root = createRoot(document.getElementById('root')!)
 root.render(
 
-        <>
+        <Provider store={store}>
         
             <GlobalStyle/>
-            <App/>
+            <AppContainer />
 
         
-        </>
+        </Provider>
 
 )

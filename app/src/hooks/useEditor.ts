@@ -3,7 +3,9 @@ import { useDom } from "./useDom";
 import { adminAPI } from "../../api/service/admin-api";
 import { EditorText } from "../helpers/editor-text";
 import { useAdmin } from "./useAdmin";
-import { Statuses, useCatchUI } from "./useCatchUI";
+import { useAppDispatch } from "../../store/store";
+import { setEditing, Statuses } from '../../store/app-ui-action-slice';
+import { delay } from "../utils/delay";
 
 export type OptionsType = {
   currentPage: string,
@@ -16,6 +18,8 @@ type EditorViewType = {
 }
 
 export const useEditor = () => {
+  const dispatch = useAppDispatch()
+
   const options = useRef<OptionsType>({
     currentPage: '',
     virtualDom: null,
@@ -38,25 +42,32 @@ export const useEditor = () => {
   } = useDom()
 
   const {enableEditig} = useAdmin()
-  const {onLoad, onError} = useCatchUI()
 
-  const save = (afterSave: () => void) => {
+  const save = async () => {
     const newDom = options.current.virtualDom?.cloneNode(true)
     unwrapTextNodes(newDom!)
     const html = serializeDomToString(newDom!)
 
-      onLoad(Statuses.LOADING, 0)
+    dispatch(setEditing({status: Statuses.LOADING}))
+    await delay(1000)
 
-      adminAPI.saveEdit(options.current.currentPage, html)
-      .then(data => {
-        onLoad(Statuses.RESOLVED, data.status, data.response)
+    adminAPI.saveEdit(options.current.currentPage, html)
+    .then(async (data) => {
+      if(data.status === 0){
+       
+        dispatch(setEditing({status: Statuses.RESOLVED, statusCode: data.status, response: data.response}))
 
-      })
-      .then(afterSave)
-      .catch((e: any) => {
-        console.log(e);
-        onError(Statuses.ERROR, true)
-      })
+        await delay(3000)
+        dispatch(setEditing({status: Statuses.IDLE, response: ''}))
+
+      }
+     
+    })
+    .catch((e: any) => {
+      console.log(e);
+      dispatch(setEditing({status: Statuses.ERROR, response: e.message}))
+
+    })
     
     
 
@@ -65,25 +76,21 @@ export const useEditor = () => {
 
 
   const loadPages = () => {
-    onLoad(Statuses.LOADING, 0, '')
 
     adminAPI.loadPageList()
       .then(pages => {
 
         setState((state) => ({ ...state, files: pages }))
-        onLoad(Statuses.RESOLVED, 0, 'Файлы загружены')
 
       })
       .catch((e: any) => {
 
         console.log(e)
-        onError(Statuses.ERROR, true)
 
       })
   }
 
   const fetchSrc = (page: string) => {
-    onLoad(Statuses.LOADING, 0)
 
     adminAPI.loadSource(page)
       .then(data => parseStringIntoDOM(data))
@@ -100,7 +107,6 @@ export const useEditor = () => {
             //@ts-ignore
             options?.current?.iframe?.load('../$randTmp-page01.html', () => {
 
-              onLoad(Statuses.RESOLVED, data.status, 'Шаблон создан')
 
               enableEditig(options.current.iframe?.contentDocument?.body!, options.current.virtualDom!)
               injectStyles(options.current.iframe)
@@ -113,7 +119,6 @@ export const useEditor = () => {
       })
       .catch((e: any) => {
         console.log(e);
-        onError(Statuses.ERROR, true)
 
 
       })

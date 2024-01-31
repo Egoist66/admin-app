@@ -1,14 +1,14 @@
-import React, { FC, useEffect, useRef } from "react";
-import styled from "styled-components";
+import React, { FC, useEffect } from "react";
 import { useText } from "../../hooks/useText";
 import '../../helpers/iframeLoader'
 import { useEditor } from "../../hooks/useEditor";
-import UIkit from "uikit";
-import { useCatchUI } from "../../hooks/useCatchUI";
+import {useAppSelector } from "../../../store/store";
+import {editorSelector} from "../../../store/app-ui-action-slice";
+import Button from "@mui/material/Button";
+import { ModalWindow } from "../Features/Modal";
+import { useToggle } from "../../hooks/useToggle";
+import { Notification } from "../Features/Notification";
 
-//import '../../../../node_modules/uikit/dist/js/uikit'
-
-const StyledEditor = styled.div``;
 
 
 
@@ -16,7 +16,11 @@ export const EditorView: FC = () => {
 
   EditorView.displayName = 'Editor'
 
+  const [isToggled, setOpen] = useToggle()
   const [newPage, setNewPage] = useText('')
+
+
+
   const {
     options,
     loadPages,
@@ -25,10 +29,8 @@ export const EditorView: FC = () => {
     state
   } = useEditor()
 
-
+  const {editing} = useAppSelector(editorSelector)
   options.current.currentPage = 'index.html'
-  const btnRef = useRef<HTMLButtonElement>(null)
-  const {status, statusCode, response} = useCatchUI()
 
   const open = (page: string) => {
     options.current.currentPage = page
@@ -43,29 +45,15 @@ export const EditorView: FC = () => {
   }
 
 
-  useEffect(() => {
-      console.log('====================================');
-      console.log(status, statusCode, response);
-      console.log('====================================');
-  },[status, statusCode, response])
+
 
   useEffect(() => {
     init(options.current.currentPage)
 
-      if(btnRef.current){
-        btnRef.current.addEventListener('click', () => {
-          save(() => {
-            UIkit.notification({
-              message: 'Успешно сохранено!',
-              status: 'success',
-              pos: 'top-left',
-              timeout: 5000
-          });
-          })
-          UIkit.modal('#modal-save').hide()
-        })
-      }
+      
   }, [])
+
+
 
 
   return (
@@ -75,28 +63,25 @@ export const EditorView: FC = () => {
 
       <div className="panel">
 
-        <button onClick={() => {
-          UIkit.modal('#modal-save').show()
-
-        }} className="uk-button uk-button-primary">Сохранить</button>
+        <Button onClick={() => setOpen(true)} variant="contained">Опубликовать</Button>
 
       </div>
 
-      <div id="modal-save" uk-modal={true.toString()}>
-        <div className="uk-modal-dialog uk-modal-body">
-          <h2 className="uk-modal-title">Сохранение</h2>
-          <p>Действительно хотите сохранить изменения?</p>
-          <p className="uk-text-right">
-            <button className="uk-button uk-button-default uk-modal-close" type="button">Отменить</button>
-            <button ref={btnRef} className="uk-button uk-button-primary" type="button">Опубликовать</button>
-          </p>
-        </div>
-      </div>
+      <ModalWindow
+        response={editing.response!}
+        status={editing.status}
+        onClickHandler={save} 
+        isOpen={isToggled} 
+        setToggle={setOpen} 
+      
+      />
 
+      <Notification 
+        message={editing.response!} 
+        status={editing.status}
 
-
-
-
+      
+      />
 
 
 
