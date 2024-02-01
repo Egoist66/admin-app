@@ -6,10 +6,21 @@ type APIResponse = {
      files: string[]
      response: string
 }
+
+export type APIBackupResponse = {
+     page: string
+     backup_time: string
+     backup: string
+}
 export const adminAPI = {
      async loadPageList(){
          const {data} =  await axios.get<string[]>('./api/fetch-pages.php')
          return data
+     },
+
+     async loadBackupList(path: string){
+          const {data} = await axios.get<APIBackupResponse[]>(path)
+          return data
      },
 
      async createNewPage(value: string){
@@ -17,8 +28,8 @@ export const adminAPI = {
           return data
      },
 
-     async deletePage(page: string){
-          const {data} = await axios.post<Omit<APIResponse, 'files'>>('./api/delete-page.php', {name: page})
+     async deletePage(){
+          const {data} = await axios.post<Omit<APIResponse, 'files'>>('./api/delete-page.php')
           return data
      },
 
@@ -34,6 +45,11 @@ export const adminAPI = {
 
      async saveEdit(page: string, html: string){
           const {data} = await axios.post<Omit<APIResponse, 'files'>>('./api/save-edits.php', {page, html})
+          return data
+     },
+
+     async restore(currenPage: string, backup: string){
+          const {data} = await axios.post<Omit<APIResponse, 'files'>>('./api/restoreBackup.php', {page: currenPage, file: backup})
           return data
      }
 }

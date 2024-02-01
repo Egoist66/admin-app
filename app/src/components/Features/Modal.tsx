@@ -7,24 +7,35 @@ import {
   Button,
   Dialog,
 } from "@mui/material";
-import React, { FC, memo } from "react";
+import React, { FC, ReactNode, memo } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { delay } from "../../utils/delay";
 import { Statuses } from "../../../store/app-ui-action-slice";
 
+type HandlerTypes = "save" | "open";
+type ButtonVariants = "inherit" | "success" | "error" | "info" | "warning" | "primary" | "secondary"
+
 type ModalProps = {
   isOpen: boolean;
-  response: string;
-  status: Statuses;
-  onClickHandler: () => void;
+  response?: string;
+  title: string;
+  render?: () => ReactNode;
+  handlers: Array<{
+    statusText?: string;
+    name: string;
+    variant?: ButtonVariants
+    handler: () => void;
+  }>;
+  status?: Statuses;
   setToggle: (isOpen: boolean) => void;
 };
 
 export const ModalWindow: FC<ModalProps> = ({
   isOpen,
-  response,
+  title,
+  handlers,
+  render,
   status,
-  onClickHandler,
   setToggle,
 }) => {
   return (
@@ -35,7 +46,7 @@ export const ModalWindow: FC<ModalProps> = ({
       open={isOpen}
     >
       <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-        <b>Сохранение</b>
+        <b>{title}</b>
       </DialogTitle>
       <IconButton
         aria-label="close"
@@ -50,27 +61,30 @@ export const ModalWindow: FC<ModalProps> = ({
         <CloseIcon />
       </IconButton>
       <DialogContent dividers>
-        <Typography gutterBottom>
-          Уверены сохранить текущие изменения?
-        </Typography>
+        <Typography gutterBottom>{render ? render() : ""}</Typography>
       </DialogContent>
       <DialogActions>
-        <Button
-          disabled={status === Statuses.LOADING}  
-          variant="outlined"
-          autoFocus
-          onClick={() => {
-            onClickHandler();
-            delay(1000).then(() => {
-              setToggle(false);
-            });
-          }}
-        >
-         {status === Statuses.LOADING ? 'Обновление...' : ' Сохранить'}
-        </Button>
-      </DialogActions>
 
-      
+        {handlers.map((handle) => (
+          <Button
+            color={handle.variant ? handle.variant : 'primary'}
+            key={handle.handler.toString()}
+            disabled={status === Statuses.LOADING}
+            onClick={() => {
+              handle.handler();
+              delay(1000).then(() => {
+                setToggle(false);
+              });
+            }}
+            variant="outlined"
+            autoFocus
+          >
+            {status && status === Statuses.LOADING ? handle.statusText : handle.name}
+          </Button>
+        ))}
+
+
+      </DialogActions>
     </Dialog>
   );
 };

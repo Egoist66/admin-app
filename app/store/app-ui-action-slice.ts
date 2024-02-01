@@ -23,7 +23,8 @@ type initialStateType = {
         deleting: OperationStateType
         creating: OperationStateType
         fetching: OperationStateType,
-        template: OperationStateType
+        template: OperationStateType,
+        backup: OperationStateType
     }
 }
 
@@ -36,7 +37,8 @@ const initialState = {
         deleting:{response: '', statusCode: 0, status: Statuses.IDLE},
         fetching: {response: '', statusCode: 0, status: Statuses.IDLE},
         editing: {response: '', statusCode: 0, status: Statuses.IDLE},
-        template: {response: '', statusCode: 0, status: Statuses.IDLE}
+        template: {response: '', statusCode: 0, status: Statuses.IDLE},
+        backup: {response: '', statusCode: 0, status: Statuses.IDLE}
     
     }
 
@@ -90,6 +92,14 @@ const AppUISlice = createSlice({
                 statusCode: action.payload.statusCode,
                 status: action.payload.status
             }
+        },
+
+        setBackup(state, action: PayloadAction<{statusCode?: 0 | 1, response?: string, status: Statuses}>){
+            state.editor.backup = {
+                response: action.payload.response,
+                statusCode: action.payload.statusCode,
+                status: action.payload.status
+            }
         }
     }
 })
@@ -101,6 +111,7 @@ export const {
     setCreating,
     setDeleting,
     setFetching,
+    setBackup,
     setEditing,
     setTemplate
 } = AppUISlice.actions

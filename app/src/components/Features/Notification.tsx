@@ -17,7 +17,6 @@ export const Notification: FC<NotificationProps> = ({message, onClose, status, t
     return (
         
         <Snackbar
-        
             open={status}
             onClose={onClose}
             message={message}

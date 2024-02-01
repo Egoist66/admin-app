@@ -1,19 +1,19 @@
 import { FormEvent, RefObject, useCallback, useRef, useState } from "react";
 import { useDom } from "./useDom";
 import { adminAPI } from "../../api/service/admin-api";
-import { EditorText } from "../helpers/editor-text";
 import { useAdmin } from "./useAdmin";
 import { useAppDispatch } from "../../store/store";
-import { setApp, setEditing, Statuses } from '../../store/app-ui-action-slice';
+import { setApp, setBackup, setEditing, Statuses } from '../../store/app-ui-action-slice';
 import { delay } from "../utils/delay";
 
 export type OptionsType = {
-  currentPage: string,
   iframe: HTMLIFrameElement | null
   virtualDom: Document | null
 }
 type EditorViewType = {
   files: string[]
+  currenPage: string
+  backups: Array<{page: string, backup: string, backup_time: string}>
 
 }
 
@@ -21,13 +21,14 @@ export const useEditor = () => {
   const dispatch = useAppDispatch()
 
   const options = useRef<OptionsType>({
-    currentPage: '',
     virtualDom: null,
     iframe: null
   })
 
   const [state, setState] = useState<EditorViewType>({
     files: [],
+    backups: [],
+    currenPage: "index.html"
     
     
   })
@@ -44,6 +45,7 @@ export const useEditor = () => {
   const {enableEditig} = useAdmin()
 
   const save = async () => {
+
     const newDom = options.current.virtualDom?.cloneNode(true)
     unwrapTextNodes(newDom!)
     const html = serializeDomToString(newDom!)
@@ -51,15 +53,33 @@ export const useEditor = () => {
     dispatch(setEditing({status: Statuses.LOADING}))
     await delay(1000)
 
-    adminAPI.saveEdit(options.current.currentPage, html)
+    adminAPI.saveEdit(state.currenPage, html)
     .then(async (data) => {
       if(data.status === 0){
        
-        dispatch(setEditing({status: Statuses.RESOLVED, statusCode: data.status, response: data.response}))
+        dispatch(
+          setEditing({
+          status: Statuses.RESOLVED, 
+          statusCode: data.status, 
+          response: data.response
+        }))
+
+        loadBackups()
 
         await delay(3000)
         dispatch(setEditing({status: Statuses.IDLE, response: ''}))
 
+      }
+      else {
+        
+        dispatch(setEditing({
+          status: Statuses.ERROR, 
+          response: data.response, 
+          statusCode: data.status
+        }))
+
+        await delay(3000)
+        dispatch(setEditing({status: Statuses.IDLE, response: ''}))
       }
      
     })
@@ -90,6 +110,60 @@ export const useEditor = () => {
       })
   }
 
+  const loadBackups = () => {
+    adminAPI.loadBackupList('./backup/backups.json')
+      .then(backups => {
+        setState((state) => ({
+          ...state,
+          backups: backups.filter(b => b.page === state.currenPage)
+        }))
+
+      })
+      .catch((e: any) => {
+
+        console.log(e)
+
+      })
+  }
+
+  const restoreBackup = async (backup: string) => {
+    const isConfirmed = confirm('Восстановление приведет к откату в исходное состояние текущей страницы, уверены?')
+    if(isConfirmed){
+      
+        dispatch(setBackup({
+          status: Statuses.LOADING,
+         
+        }))
+        await delay(1500)
+
+        adminAPI.restore(state.currenPage, backup)
+        .then(data => {
+
+          if(data.status === 0){
+            dispatch(setBackup({
+              status: Statuses.RESOLVED,
+              response: data.response,
+              statusCode: data.status
+            }))
+
+            console.log('Восстановлено..');
+            open(state.currenPage)
+          }
+          else {
+            dispatch(setBackup({
+              status: Statuses.ERROR,
+              response: data.response,
+              statusCode: data.status
+            }))
+          }
+        })
+      
+        .catch((e) => {
+          console.log(e);
+        })
+    }
+  }
+
   const fetchSrc = (page: string) => {
     dispatch(setApp(Statuses.LOADING))
 
@@ -112,12 +186,14 @@ export const useEditor = () => {
               injectStyles(options.current.iframe)
              
               dispatch(setApp(Statuses.RESOLVED))
+              adminAPI.deletePage()
             })
           })
 
 
 
       })
+      
       .catch((e: any) => {
         console.log(e);
 
@@ -125,6 +201,15 @@ export const useEditor = () => {
       })
   }
 
+  
+  const open = (page: string) => {
+    setState({
+      ...state,
+      currenPage: page
+    })
+
+    fetchSrc(page);
+  };
 
 
   const createPage = (e: FormEvent, newPage: string) => {
@@ -145,7 +230,7 @@ export const useEditor = () => {
   }
 
   const deletePage = (page: string) => {
-    adminAPI.deletePage(page)
+    adminAPI.deletePage()
       .then(data => {
         
 
@@ -163,6 +248,10 @@ export const useEditor = () => {
     createPage,
     fetchSrc,
     loadPages,
+    loadBackups,
+    restoreBackup,
+    open,
+    setState,
     state,
     save,
   }

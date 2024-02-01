@@ -67,10 +67,17 @@ export const useDom = () => {
     }
 
     const unwrapTextNodes = (dom: Document | any) => {
-        const customWrapper = dom.body.querySelectorAll('text-editor') as NodeList
-        customWrapper.forEach(elem => {
+        try {
+            const customWrapper = dom.body.querySelectorAll('text-editor') as NodeList
+            customWrapper.forEach(elem => {
             elem.parentNode?.replaceChild(elem.firstChild!, elem)
-        })
+            })
+        }
+        catch(e){
+            console.log('====================================');
+            console.log(e);
+            console.log('====================================');
+        }
     }
 
     const serializeDomToString = (dom: Document | Node) => {

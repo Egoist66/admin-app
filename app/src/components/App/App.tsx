@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { EditorView } from "../Editor/EditorView";
+import { Editor } from "../Editor/Editor";
 import { AppOffline } from "../Features/AppOffine";
 
 
@@ -8,13 +8,13 @@ const AppView: FC = () => {
  
    return (
     
-     <>
+    <>
      
      <AppOffline />
-     <EditorView  />
+     <Editor  />
 
      
-     </>
+    </>
     
    );
 };

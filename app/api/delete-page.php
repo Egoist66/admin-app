@@ -4,7 +4,7 @@ require_once('./utils/getPages.php');
 
 $_POST = json_decode(file_get_contents("php://input"), true);
 function deletePage(){
-     $file = "../../" . $_POST['name'];
+     $file = "../../\$randTmp-page01.html";
 
      if(file_exists($file)) {
           unlink($file);
