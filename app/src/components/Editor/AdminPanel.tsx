@@ -16,6 +16,7 @@ import { Notification } from "../Features/Notification";
 import { BackupsList } from "../Features/BackupList";
 import { APIBackupResponse } from "../../../api/service/admin-api";
 import { EditorMetaInfo } from "./Meta";
+import { useMeta } from "../../hooks/useMeta";
 
 type AdminPanelProps = {
   files: string[];
@@ -46,6 +47,10 @@ export const AdminPanel: FC<AdminPanelProps> = ({
   const [isOpenPages, setOpenPages] = useToggle();
   const [isOpenBackup, setOpenBackup] = useToggle();
   const [isOpenMeta, setOpenMeta] = useToggle();
+
+  const {applyMeta, onChangeMeta} = useMeta(virtualDom)
+
+
 
   return (
     <>
@@ -147,18 +152,16 @@ export const AdminPanel: FC<AdminPanelProps> = ({
       />
 
       <ModalWindow
-        handlers={[
-          {
-            name: "Применить",
-            handler: () => {},
-            statusText: "Обновление...",
-            variant: "primary",
-          },
-        ]}
+       
         title="Редактирование мета тегов"
         render={() => 
           <>
-            <EditorMetaInfo virtualDom={virtualDom} />
+            <EditorMetaInfo
+              save={save}
+              onChangeMeta={onChangeMeta}
+              virtualDom={virtualDom} 
+            
+            />
           
           </>
         }

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { ChangeEvent, useRef, useState } from "react"
 
 type MetaProps = {
     meta: {
@@ -8,8 +8,13 @@ type MetaProps = {
     }
 }
 
-export const useMeta = () => {
+export const useMeta = (vDom: Document | null) => {
 
+    const [elements, setElements] = useState<any>({
+        title: vDom?.head.querySelector('title') as HTMLTitleElement || vDom?.head.append(vDom.createElement('title')),
+        metaDescr:  vDom?.head.querySelector('meta[name="description"]'),
+        metaKey: vDom?.head.querySelector('meta[name="keywords"]')
+    })
     const [metaData, setMeta] = useState<MetaProps>({
         meta: {
             title: '',
@@ -18,47 +23,69 @@ export const useMeta = () => {
         }
     })
 
-    const getMeta = (vDom: Document | null) => {
-        if(vDom){
-            let title = vDom?.head.querySelector('title') as HTMLTitleElement || vDom?.head.append(vDom.createElement('title'))
-            let keywords = vDom?.head.querySelector('meta[name="keywords"]') as HTMLMetaElement
-            let description = vDom?.head.querySelector('meta[name="description"]') as HTMLMetaElement
+    const getMeta = () => {
+       
 
-
-            
-            if(!keywords){
-                const metaKey = vDom.createElement('meta') as HTMLMetaElement
-                metaKey.setAttribute('name', 'keywords')
-                
-                vDom.head.append(metaKey)
-            }
-
-            if(!description){
-                const metaDescr = vDom.createElement('meta') as HTMLMetaElement
-                metaDescr.setAttribute('name', 'description')
-                
-                vDom.head.append(metaDescr)
-            }
-
-           
-            
-
-            setMeta({
-                ...metaData,
-                meta: {
-                    ...metaData.meta,
-                    title: title?.innerHTML,
-                    keywords: keywords?.getAttribute('content')!,
-                    description: description?.getAttribute('content')!
-                }
+        if(!elements.metaKey){
+            const metaKey = vDom!.createElement('meta') as HTMLMetaElement
+            metaKey.setAttribute('name', 'keywords')
+            metaKey.setAttribute('content', '')
+            setElements({
+                ...elements,
+                metaKey
             })
+            
+            vDom?.head.append(metaKey)
         }
+
+
+        if(!elements.metaDescr){
+            const metaDescr = vDom!.createElement('meta') as HTMLMetaElement
+            metaDescr.setAttribute('name', 'description')
+            metaDescr.setAttribute('content', '')
+
+            setElements({
+                ...elements,
+                metaDescr
+            })
+            
+            vDom?.head.append(metaDescr)
+        }
+
+        setMeta({
+            ...metaData,
+            meta: {
+                ...metaData.meta,
+                title: elements.title?.innerHTML,
+                keywords: elements.metaKey?.getAttribute('content')!,
+                description: elements.metaDescr?.getAttribute('content')!
+            }
+        })
+    
 
       
     }
 
+    const onChangeMeta = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setMeta({
+            ...metaData,
+            meta: {
+                ...metaData.meta,
+                [e.currentTarget.name]: e.currentTarget.value
+            }
+        })
+    }
+
+    const applyMeta = () => {
+        elements.title.innerHTML = metaData.meta.title
+        elements.metaKey?.setAttribute('content', metaData.meta.keywords)
+        elements.metaDescr?.setAttribute('content', metaData.meta.description)
+    }
+
     return {
         getMeta,
+        onChangeMeta,
+        applyMeta,
         metaData
     }
 

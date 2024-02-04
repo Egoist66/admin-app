@@ -18,13 +18,13 @@ type ButtonVariants = "inherit" | "success" | "error" | "info" | "warning" | "pr
 type ModalProps = {
   isOpen: boolean;
   response?: string;
-  title: string;
+  title?: string;
   render?: () => ReactNode;
-  handlers: Array<{
+  handlers?: Array<{
     statusText?: string;
-    name: string;
+    name?: string;
     variant?: ButtonVariants
-    handler: () => void;
+    handler?: () => void;
   }>;
   status?: Statuses;
   setToggle: (isOpen: boolean) => void;
@@ -65,13 +65,13 @@ export const ModalWindow: FC<ModalProps> = ({
       </DialogContent>
       <DialogActions>
 
-        {handlers.map((handle) => (
+        {handlers ? handlers.map((handle) => (
           <Button
             color={handle.variant ? handle.variant : 'primary'}
-            key={handle.handler.toString()}
+            key={handle?.handler?.toString()}
             disabled={status === Statuses.LOADING}
             onClick={() => {
-              handle.handler();
+             handle.handler ? handle.handler() : () => {};
               delay(1000).then(() => {
                 setToggle(false);
               });
@@ -81,7 +81,7 @@ export const ModalWindow: FC<ModalProps> = ({
           >
             {status && status === Statuses.LOADING ? handle.statusText : handle.name}
           </Button>
-        ))}
+        )): null}
 
 
       </DialogActions>
