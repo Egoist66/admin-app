@@ -1,6 +1,7 @@
 import React, { memo, useEffect } from "react";
 import { FC } from "react";
 import { delay } from "../../utils/delay";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import {
   List,
   ListItem,
@@ -12,12 +13,12 @@ import { APIBackupResponse } from "../../../api/service/admin-api";
 
 type PageListProps = {
   backups: Array<APIBackupResponse>;
-  deletePage?: (page: string) => void;
+  deletePage: (page: string) => void;
   afterBackup?: () => void
   restoreBackup: (backup: string) => void
 };
 
-export const BackupsList: FC<PageListProps> = ({ backups, restoreBackup, afterBackup }) => {
+export const BackupsList: FC<PageListProps> = ({ backups, deletePage, restoreBackup, afterBackup }) => {
 
     return (
       <List>
@@ -32,6 +33,18 @@ export const BackupsList: FC<PageListProps> = ({ backups, restoreBackup, afterBa
               
             }}>
               <ListItemText primary={b.backup} /><span>Создана от: {b.backup_time}</span>
+              <span title={`Удалить копию ${b.backup}`} onClick={async (e) => {
+                e.stopPropagation()
+                console.log(b.backup);
+                  
+                deletePage(b.backup)
+
+            
+               
+                  
+              }}>
+                <DeleteOutlineIcon color="error" />
+              </span>
             </ListItemButton>
           </ListItem>
         )): 'Резервные копии отсутствуют'}

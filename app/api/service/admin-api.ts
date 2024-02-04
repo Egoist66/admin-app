@@ -28,8 +28,8 @@ export const adminAPI = {
           return data
      },
 
-     async deletePage(){
-          const {data} = await axios.post<Omit<APIResponse, 'files'>>('./api/delete-page.php')
+     async deletePage(page: string){
+          const {data} = await axios.post<Omit<APIResponse, 'files'>>('./api/delete-page.php', {page})
           return data
      },
 

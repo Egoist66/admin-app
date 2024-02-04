@@ -13,7 +13,15 @@ export const Editor: FC = () => {
 
   const [newPage, setNewPage] = useText("");
   const { status } = useAppSelector(appSelector);
-  const { options, save, restoreBackup, open, loadPages, loadBackups, state} = useEditor();
+  const {
+    options, 
+    deletePage, 
+    save, 
+    restoreBackup, 
+    open, 
+    loadPages, 
+    loadBackups, 
+    state} = useEditor();
 
 
 
@@ -27,6 +35,7 @@ export const Editor: FC = () => {
 
   useEffect(() => {
     init(state.currenPage);
+   
   }, []);
 
 
@@ -37,6 +46,8 @@ export const Editor: FC = () => {
       <iframe src={""} frameBorder="0"></iframe>
       <AdminPanel 
         save={save}
+        virtualDom={options.current.virtualDom}
+        deletePage={deletePage}
         restoreBackup={restoreBackup}
         backups={state.backups} 
         loadBackups={loadBackups}

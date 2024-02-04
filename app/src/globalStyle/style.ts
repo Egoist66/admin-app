@@ -57,6 +57,27 @@ export const GlobalStyle = createGlobalStyle`
      .progress {
           border-radius: 0px !important;
      }
+     #text-area-meta {
+          border: 1px solid transparent;
+          outline: 1px solid rgba(0, 0, 0, 0.23);
+          padding: 16px;
+          font-size: 1rem;
+          font-family: 'Roboto';
+     }
+
+     #text-area-meta:hover {
+          outline: 1px solid black;
+     }
+
+     #text-area-meta:focus-visible {
+          outline: 2px solid #1565C0;
+          border: 1px solid transparent;
+     }
+
+     #text-area-meta:focus {
+          outline: 2px solid #1565C0;
+          border: 1px solid transparent;
+     }
      
 
 `

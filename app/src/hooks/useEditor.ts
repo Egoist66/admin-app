@@ -1,9 +1,9 @@
-import { FormEvent, RefObject, useCallback, useRef, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { useDom } from "./useDom";
 import { adminAPI } from "../../api/service/admin-api";
 import { useAdmin } from "./useAdmin";
 import { useAppDispatch } from "../../store/store";
-import { setApp, setBackup, setEditing, Statuses } from '../../store/app-ui-action-slice';
+import { setApp, setBackup, setDeleting, setEditing, Statuses } from '../../store/app-ui-action-slice';
 import { delay } from "../utils/delay";
 
 export type OptionsType = {
@@ -115,7 +115,7 @@ export const useEditor = () => {
       .then(backups => {
         setState((state) => ({
           ...state,
-          backups: backups.filter(b => b.page === state.currenPage)
+          backups: backups?.filter(b => b.page === state.currenPage)
         }))
 
       })
@@ -186,7 +186,7 @@ export const useEditor = () => {
               injectStyles(options.current.iframe)
              
               dispatch(setApp(Statuses.RESOLVED))
-              adminAPI.deletePage()
+              adminAPI.deletePage("../../$randTmp-page01.html")
             })
           })
 
@@ -230,12 +230,30 @@ export const useEditor = () => {
   }
 
   const deletePage = (page: string) => {
-    adminAPI.deletePage()
-      .then(data => {
-        
+
+    dispatch(setDeleting({status: Statuses.LOADING}))
+
+    adminAPI.deletePage(page)
+      .then(async data => {
+        if(data.status === 0){
+          await delay(1500)
+          setState((state) => ({
+            ...state,
+            backups: state.backups.filter(b => b.backup !== page)
+          }))
+         
+          dispatch(setDeleting({status: Statuses.RESOLVED, statusCode: data.status, response: data.response}))
+          await delay(1500)
+          dispatch(setDeleting({status: Statuses.IDLE}))
+
+
+        }
+        else {
+          dispatch(setDeleting({status: Statuses.ERROR, statusCode: data.status, response: data.response}))
+
+        }
 
       })
-      .then(loadPages)
       .catch((e) => {
         console.log(e);
 

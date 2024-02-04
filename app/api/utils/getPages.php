@@ -11,5 +11,6 @@ function getHTMLFiles(string $url) {
           ));
      }
 
+     
      return $modifiedFiles;
 }

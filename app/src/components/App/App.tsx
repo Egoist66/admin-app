@@ -8,13 +8,13 @@ const AppView: FC = () => {
  
    return (
     
-    <>
+      <>
      
-     <AppOffline />
-     <Editor  />
+         <AppOffline />
+         <Editor  />
 
      
-    </>
+      </>
     
    );
 };

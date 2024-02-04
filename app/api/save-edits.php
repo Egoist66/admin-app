@@ -6,7 +6,6 @@ require_once('./utils/time-formatter.php');
 $_POST = json_decode(file_get_contents("php://input"), true);
 
 
-
 $page = $_POST["page"] ?? '';
 $newhtml = $_POST["html"] ?? '';
 $file = $_POST["page"];
