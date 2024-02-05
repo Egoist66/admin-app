@@ -1,3 +1,4 @@
+import { EditorImages } from "../helpers/editor-images"
 import { EditorText } from "../helpers/editor-text"
 
 export const useAdmin = () => {
@@ -10,6 +11,15 @@ export const useAdmin = () => {
                const foundElement = virtualDOM.body.querySelector(`[node-id="${id}"]`)
                
                new EditorText(element as HTMLElement, foundElement as HTMLElement)
+          })
+
+
+          body.querySelectorAll('[editable-img-id]').forEach((element) => {
+
+               const id = element.getAttribute('editable-img-id')
+               const foundElement = virtualDOM.body.querySelector(`[editable-img-id="${id}"]`)
+               
+               new EditorImages(element as HTMLImageElement, foundElement as HTMLImageElement)
           })
      }
 

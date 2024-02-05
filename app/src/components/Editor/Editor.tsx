@@ -3,9 +3,10 @@ import { useText } from "../../hooks/useText";
 import "../../helpers/iframeLoader";
 import { useEditor } from "../../hooks/useEditor";
 import {useAppSelector } from "../../../store/store";
-import {Statuses,appSelector,editorSelector, setEditing} from "../../../store/app-ui-action-slice";
+import {Statuses,appSelector} from "../../../store/app-ui-action-slice";
 import { Preloader } from "../Features/Preloader";
 import { AdminPanel } from "./AdminPanel";
+import { Input, TextField } from "@mui/material";
 
 export const Editor: FC = () => {
 
@@ -44,6 +45,7 @@ export const Editor: FC = () => {
       {status === Statuses.LOADING ?  <Preloader /> : null}
 
       <iframe src={""} frameBorder="0"></iframe>
+      <input hidden accept="image/*"  id="img-upload" type="file" />
       <AdminPanel 
         save={save}
         virtualDom={options.current.virtualDom}

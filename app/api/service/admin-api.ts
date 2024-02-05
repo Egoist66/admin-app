@@ -7,6 +7,15 @@ type APIResponse = {
      response: string
 }
 
+type APIImgResponse = {
+     file: {
+          name: string
+          path: string
+          size: number
+          type: string
+     }
+}
+
 export type APIBackupResponse = {
      page: string
      backup_time: string
@@ -50,6 +59,16 @@ export const adminAPI = {
 
      async restore(currenPage: string, backup: string){
           const {data} = await axios.post<Omit<APIResponse, 'files'>>('./api/restoreBackup.php', {page: currenPage, file: backup})
+          return data
+     },
+
+     async uploadImage(formData: FormData){
+          const {data} = await axios.post<Omit<APIResponse & APIImgResponse, 'files'>>('./api/upload-image.php', formData, {
+               headers: {
+                    'Content-Type': 'multipart/form-data'
+               }
+          })
+          
           return data
      }
 }

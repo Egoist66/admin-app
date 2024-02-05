@@ -11,19 +11,23 @@ export const useDom = () => {
         style!.innerHTML = `
         
             text-editor:hover {
-                 outline: 3px solid orange;
-                 outline-offset: 8px;
+                outline: 3px solid orange;
+                outline-offset: 8px;
             }
             
-             text-editor:focus {
-                 outline: 3px solid red;
-                 outline-offset: 8px;
+            text-editor:focus {
+                outline: 3px solid red;
+                outline-offset: 8px;
             }
             
             .main h1,h2,h3,h4 {
               overflow: unset !important;
             }
 
+            [editable-img-id]:hover {
+                outline: 3px solid orange;
+                outline-offset: 8px;
+            }
           
         
         `
@@ -74,9 +78,7 @@ export const useDom = () => {
             })
         }
         catch(e){
-            console.log('====================================');
             console.log(e);
-            console.log('====================================');
         }
     }
 
@@ -85,8 +87,41 @@ export const useDom = () => {
         return serializer.serializeToString(dom)
     }
 
+    const wrapImages = (dom: Document) => {
+
+       
+        const images = dom.body.querySelectorAll('img')
+        images.forEach((img, i) => {
+            img.setAttribute('editable-img-id', String(i))
+        })
+
+        return dom
+        
+        
+       
+    }
+
+
+    const unwrapImages = (dom: any) => {
+
+        try {
+            const images = dom.body.querySelectorAll('[editable-img-id]')
+            images.forEach((img: HTMLImageElement) => {
+                img.removeAttribute('editable-img-id')
+            })
+
+      
+        }
+        catch(e){
+            console.log(e);
+        }
+       
+    }
+
     return {
         parseStringIntoDOM,
+        wrapImages,
+        unwrapImages,
         wrapTextNodes,
         unwrapTextNodes,
         serializeDomToString,

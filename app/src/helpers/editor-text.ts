@@ -1,6 +1,6 @@
 export class EditorText {
-    public element: HTMLElement
-    public virtualElement: HTMLElement
+    private element: HTMLElement
+    private virtualElement: HTMLElement
 
     constructor(element: HTMLElement, virtualElement: HTMLElement) {
         this.element = element

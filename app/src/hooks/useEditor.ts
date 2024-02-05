@@ -39,6 +39,8 @@ export const useEditor = () => {
     wrapTextNodes,
     injectStyles,
     serializeDomToString,
+    wrapImages,
+    unwrapImages,
     parseStringIntoDOM
   } = useDom()
 
@@ -48,6 +50,7 @@ export const useEditor = () => {
 
     const newDom = options.current.virtualDom?.cloneNode(true)
     unwrapTextNodes(newDom!)
+    unwrapImages(newDom!)
     const html = serializeDomToString(newDom!)
 
     dispatch(setEditing({status: Statuses.LOADING}))
@@ -170,6 +173,7 @@ export const useEditor = () => {
     adminAPI.loadSource(page)
       .then(data => parseStringIntoDOM(data))
       .then(wrapTextNodes)
+      .then(wrapImages)
       .then(dom => {
         options.current.virtualDom = dom
         return dom

@@ -15,7 +15,7 @@ import { useAppDispatch, useAppSelector } from "../../../store/store";
 import { Notification } from "../Features/Notification";
 import { BackupsList } from "../Features/BackupList";
 import { APIBackupResponse } from "../../../api/service/admin-api";
-import { EditorMetaInfo } from "./Meta";
+import { EditorMetaInfo } from "./MetaEditor";
 import { useMeta } from "../../hooks/useMeta";
 
 type AdminPanelProps = {
