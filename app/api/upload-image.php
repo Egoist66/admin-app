@@ -7,8 +7,9 @@ function uploadFile(array $files): void {
 
     if(file_exists($files['image']['tmp_name'])) {
 
-        $files['image']['type'] === 'image/png';
-
+        if(!is_dir('../../img/')){
+            mkdir('../../img/');
+        }
 
         if(move_uploaded_file($files["image"]['tmp_name'], "../../img/{$files['image']['name']}")){
 
@@ -35,6 +36,15 @@ function uploadFile(array $files): void {
 
             http_response_code($httpStatuses['OK']);
         }
+    }
+    else {
+        echo json_encode([
+            'status'=> 1,
+            'response' => 'Файл не был загружен',
+            'file' => []
+        ]);
+
+        http_response_code($httpStatuses['OK']);
     }
     
 

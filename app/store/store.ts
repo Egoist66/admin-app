@@ -1,12 +1,14 @@
 import { ThunkDispatch, UnknownAction, configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useSelector, useDispatch } from "react-redux";
 import appUiActionSlice from "./app-ui-action-slice";
+import appAuthSlice from "./app-auth-slice";
 
 
 
 export const store = configureStore({
     reducer: {
-        appUI: appUiActionSlice
+        appUI: appUiActionSlice,
+        appAuth: appAuthSlice
     }
 })
 

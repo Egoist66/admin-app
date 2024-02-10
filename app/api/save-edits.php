@@ -45,7 +45,7 @@ function saveEdits(){
      if ($newhtml && file_exists('../../' . $file)) {
 
           createBackup('../backup/');
-          
+           
           file_put_contents('../../' . $file, $newhtml);
           echo json_encode(array(
                "status" => 0,

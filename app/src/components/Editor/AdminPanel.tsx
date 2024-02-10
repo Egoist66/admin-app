@@ -2,10 +2,10 @@ import { Grid, Button } from "@mui/material";
 import React from "react";
 import { FC } from "react";
 import {
-  appSelector,
   editorSelector,
   setDeleting,
   setEditing,
+  setUpload,
   Statuses,
 } from "../../../store/app-ui-action-slice";
 import { ModalWindow } from "../Features/Modal";
@@ -17,6 +17,7 @@ import { BackupsList } from "../Features/BackupList";
 import { APIBackupResponse } from "../../../api/service/admin-api";
 import { EditorMetaInfo } from "./MetaEditor";
 import { useMeta } from "../../hooks/useMeta";
+import { Login } from "../Login/Login";
 
 type AdminPanelProps = {
   files: string[];
@@ -25,7 +26,7 @@ type AdminPanelProps = {
   init: (page: string) => void;
   save: () => Promise<void>;
   loadBackups: () => void;
-  virtualDom: Document | null
+  virtualDom: Document | null;
   restoreBackup: (backup: string) => void;
 };
 
@@ -41,16 +42,15 @@ export const AdminPanel: FC<AdminPanelProps> = ({
   AdminPanel.displayName = "AdminPanel";
 
   const dispatch = useAppDispatch();
-  const { editing, backup, deleting } = useAppSelector(editorSelector);
+  const { editing, backup, deleting, uploading } =
+    useAppSelector(editorSelector);
 
   const [isOpeEdit, setOpenEdit] = useToggle();
   const [isOpenPages, setOpenPages] = useToggle();
   const [isOpenBackup, setOpenBackup] = useToggle();
   const [isOpenMeta, setOpenMeta] = useToggle();
 
-  const {applyMeta, onChangeMeta} = useMeta(virtualDom)
-
-
+  const {onChangeMeta } = useMeta(virtualDom);
 
   return (
     <>
@@ -125,6 +125,7 @@ export const AdminPanel: FC<AdminPanelProps> = ({
       />
 
       <ModalWindow
+        fullScreen
         handlers={[
           {
             name: "Отменить",
@@ -152,22 +153,35 @@ export const AdminPanel: FC<AdminPanelProps> = ({
       />
 
       <ModalWindow
-       
+     
         title="Редактирование мета тегов"
-        render={() => 
+        render={() => (
           <>
             <EditorMetaInfo
               save={save}
               onChangeMeta={onChangeMeta}
-              virtualDom={virtualDom} 
-            
+              virtualDom={virtualDom}
             />
-          
           </>
-        }
+        )}
         isOpen={isOpenMeta}
         setToggle={setOpenMeta}
       />
+
+
+      <ModalWindow
+        title="Вход в систему"
+        render={() => (
+          <>
+            <Login />
+          </>
+        )}
+        isOpen={true}
+        setToggle={() => {}}
+      />
+
+
+
 
 
 
@@ -195,7 +209,31 @@ export const AdminPanel: FC<AdminPanelProps> = ({
           message={deleting.response!}
           status={
             deleting.status === Statuses.RESOLVED ||
-            editing.status === Statuses.ERROR
+            deleting.status === Statuses.ERROR
+          }
+        />
+      ) : null}
+
+      {uploading.status === Statuses.LOADING ?
+        <Notification
+          variant="filled"
+          onClose={() => dispatch(setUpload({ status: Statuses.IDLE }))}
+          type={uploading.status === Statuses.LOADING ? "success" : "error"}
+          message={uploading.response!}
+          status={uploading.status === Statuses.LOADING}
+        />
+      : null}
+
+      {uploading.status === Statuses.RESOLVED ||
+      uploading.status === Statuses.ERROR ? (
+        <Notification
+          variant="filled"
+          onClose={() => dispatch(setUpload({ status: Statuses.IDLE }))}
+          type={uploading.status !== Statuses.ERROR ? "success" : "error"}
+          message={uploading.response!}
+          status={
+            uploading.status === Statuses.RESOLVED ||
+            uploading.status === Statuses.ERROR
           }
         />
       ) : null}

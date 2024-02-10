@@ -1,8 +1,9 @@
+import { useAppDispatch } from "../../store/store"
 import { EditorImages } from "../helpers/editor-images"
 import { EditorText } from "../helpers/editor-text"
 
 export const useAdmin = () => {
-
+     const dispatch = useAppDispatch()
     
      const enableEditig = (body: HTMLElement, virtualDOM: Document) => {
           body.querySelectorAll('text-editor').forEach((element) => {
@@ -19,7 +20,11 @@ export const useAdmin = () => {
                const id = element.getAttribute('editable-img-id')
                const foundElement = virtualDOM.body.querySelector(`[editable-img-id="${id}"]`)
                
-               new EditorImages(element as HTMLImageElement, foundElement as HTMLImageElement)
+               new EditorImages(
+                    dispatch, 
+                    element as HTMLImageElement, 
+                    foundElement as HTMLImageElement
+               )
           })
      }
 

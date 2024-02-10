@@ -18,20 +18,20 @@ function deletePage(){
           $backupFile = array_values($backupFile);
           file_put_contents('../backup/backups.json', json_encode($backupFile));
 
-          echo json_encode(array(
+          echo json_encode([
                "status" => 0,
                "response" => "Файл удален!"
-          ));
+          ]);
           
           http_response_code(200);
           exit();
 
      }
      else {
-          echo json_encode(array(
+          echo json_encode([
                "status" => 1,
                "response" => "Файл не был удален!"
-          ));
+          ]);
 
           http_response_code(200);
           exit();

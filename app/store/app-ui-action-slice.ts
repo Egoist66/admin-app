@@ -24,11 +24,12 @@ type initialStateType = {
         creating: OperationStateType
         fetching: OperationStateType,
         template: OperationStateType,
-        backup: OperationStateType
+        backup: OperationStateType,
+        uploading: OperationStateType
     }
 }
 
-const initialState = {
+const initialState: initialStateType = {
     app: {
         status: Statuses.IDLE
     },
@@ -38,11 +39,12 @@ const initialState = {
         fetching: {response: '', statusCode: 0, status: Statuses.IDLE},
         editing: {response: '', statusCode: 0, status: Statuses.IDLE},
         template: {response: '', statusCode: 0, status: Statuses.IDLE},
-        backup: {response: '', statusCode: 0, status: Statuses.IDLE}
+        backup: {response: '', statusCode: 0, status: Statuses.IDLE},
+        uploading: {response: '', statusCode: 0, status: Statuses.IDLE}
     
     }
 
-} as initialStateType
+} 
 
 
 const AppUISlice = createSlice({
@@ -54,7 +56,7 @@ const AppUISlice = createSlice({
             state.app.status = action.payload
         },
 
-        setCreating(state, action: PayloadAction<{statusCode?: 0 | 1, response?: string, status: Statuses}>){
+        setCreating(state, action: PayloadAction<OperationStateType>){
             state.editor.creating = {
                 response: action.payload.response,
                 statusCode: action.payload.statusCode,
@@ -62,7 +64,7 @@ const AppUISlice = createSlice({
             }
         },
 
-        setDeleting(state, action: PayloadAction<{statusCode?: 0 | 1, response?: string, status: Statuses}>){
+        setDeleting(state, action: PayloadAction<OperationStateType>){
             state.editor.deleting = {
                 response: action.payload.response,
                 statusCode: action.payload.statusCode,
@@ -70,7 +72,7 @@ const AppUISlice = createSlice({
             }
         },
 
-        setFetching(state, action: PayloadAction<{statusCode?: 0 | 1, response?: string, status: Statuses}>){
+        setFetching(state, action: PayloadAction<OperationStateType>){
             state.editor.fetching = {
                 response: action.payload.response,
                 statusCode: action.payload.statusCode,
@@ -78,7 +80,7 @@ const AppUISlice = createSlice({
             }
         },
 
-        setEditing(state, action: PayloadAction<{statusCode?: 0 | 1, response?: string, status: Statuses}>){
+        setEditing(state, action: PayloadAction<OperationStateType>){
             state.editor.editing = {
                 response: action.payload.response,
                 statusCode: action.payload.statusCode,
@@ -86,7 +88,7 @@ const AppUISlice = createSlice({
             }
         },
 
-        setTemplate(state, action: PayloadAction<{statusCode?: 0 | 1, response?: string, status: Statuses}>){
+        setTemplate(state, action: PayloadAction<OperationStateType>){
             state.editor.template = {
                 response: action.payload.response,
                 statusCode: action.payload.statusCode,
@@ -94,8 +96,16 @@ const AppUISlice = createSlice({
             }
         },
 
-        setBackup(state, action: PayloadAction<{statusCode?: 0 | 1, response?: string, status: Statuses}>){
+        setBackup(state, action: PayloadAction<OperationStateType>){
             state.editor.backup = {
+                response: action.payload.response,
+                statusCode: action.payload.statusCode,
+                status: action.payload.status
+            }
+        },
+
+        setUpload(state, action: PayloadAction<OperationStateType>){
+            state.editor.uploading = {
                 response: action.payload.response,
                 statusCode: action.payload.statusCode,
                 status: action.payload.status
@@ -112,6 +122,7 @@ export const {
     setDeleting,
     setFetching,
     setBackup,
+    setUpload,
     setEditing,
     setTemplate
 } = AppUISlice.actions

@@ -51,6 +51,8 @@ export const useEditor = () => {
     const newDom = options.current.virtualDom?.cloneNode(true)
     unwrapTextNodes(newDom!)
     unwrapImages(newDom!)
+
+    
     const html = serializeDomToString(newDom!)
 
     dispatch(setEditing({status: Statuses.LOADING}))

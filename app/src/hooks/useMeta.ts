@@ -76,10 +76,12 @@ export const useMeta = (vDom: Document | null) => {
         })
     }
 
-    const applyMeta = () => {
+    const applyMeta = (afterApply: () => void) => {
         elements.title.innerHTML = metaData.meta.title
         elements.metaKey?.setAttribute('content', metaData.meta.keywords)
         elements.metaDescr?.setAttribute('content', metaData.meta.description)
+
+        afterApply()
     }
 
     return {

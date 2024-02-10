@@ -1,6 +1,8 @@
 import { Box, Button, TextField, TextareaAutosize } from "@mui/material";
 import React, { ChangeEvent, FC, memo, useEffect } from "react";
 import { useMeta } from "../../hooks/useMeta";
+import { useAppSelector } from "../../../store/store";
+import { Statuses, editorSelector } from "../../../store/app-ui-action-slice";
 
 type EditorMetaInfoProps = {
   virtualDom: Document | null;
@@ -18,6 +20,7 @@ export const EditorMetaInfo: FC<EditorMetaInfoProps> = ({
   EditorMetaInfo.displayName = "EditorMetaInfo";
 
   const { getMeta, applyMeta, metaData, onChangeMeta } = useMeta(virtualDom);
+  const {editing} = useAppSelector(editorSelector)
 
   useEffect(() => {
     if (virtualDom) {
@@ -82,14 +85,12 @@ export const EditorMetaInfo: FC<EditorMetaInfoProps> = ({
       <Box display={'flex'} justifyContent={'flex-end'}>
         <Button
           variant="outlined"
+          disabled={editing.status === Statuses.LOADING}
           size="large"
           color="primary"
-          onClick={() => {
-            applyMeta();
-            save();
-          }}
+          onClick={() => applyMeta(save)}
         >
-          Apply
+          {editing.status === Statuses.LOADING ? 'Применение...' : 'Применить'}
         </Button>
       </Box>
     </form>

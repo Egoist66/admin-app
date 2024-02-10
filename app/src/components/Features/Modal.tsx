@@ -19,6 +19,7 @@ type ModalProps = {
   isOpen: boolean;
   response?: string;
   title?: string;
+  fullScreen?: boolean
   render?: () => ReactNode;
   handlers?: Array<{
     statusText?: string;
@@ -34,6 +35,7 @@ export const ModalWindow: FC<ModalProps> = ({
   isOpen,
   title,
   handlers,
+  fullScreen,
   render,
   status,
   setToggle,
@@ -41,6 +43,7 @@ export const ModalWindow: FC<ModalProps> = ({
   return (
     <Dialog
       fullWidth
+      fullScreen={fullScreen}
       onClose={() => setToggle(false)}
       aria-labelledby="customized-dialog-title"
       open={isOpen}
