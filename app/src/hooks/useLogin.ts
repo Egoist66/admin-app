@@ -98,9 +98,10 @@ export const useLogin = () => {
         }
     }
     
+    
     const logout = () => {
         
-        AuthAPI.logout(location.href + 'api/logout.php?action=logout')
+        AuthAPI.logout(location.href + '/api/logout.php?action=logout')
         .then((data) => {
             if(data.loggedOut){
                 console.info('Session stopped...', Date.now())
