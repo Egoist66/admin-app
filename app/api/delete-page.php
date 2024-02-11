@@ -1,7 +1,12 @@
 <?php 
+session_start();
 
 require_once('./utils/getPages.php');
 
+if($_SESSION['auth'] !== true){
+     http_response_code(403);
+     die();
+}
 
 $_POST = json_decode(file_get_contents("php://input"), true);
 $backupFile = json_decode(file_get_contents('../backup/backups.json'), true);

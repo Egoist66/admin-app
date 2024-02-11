@@ -10,8 +10,17 @@ export const AuthAPI = {
     },
 
     async login(url: string, password: string){
-        const {data} = await axios.post<LoginStateType>(url, {password})
+        const {data} = await axios.post<LoginStateType & {isBlocked: boolean, time: number}>(url, {password})
         
         return data
-    },   
+    },
+
+
+    async logout(url: string){
+        const {data} = await axios.post<{loggedOut: boolean}>(url, {action: 'logout'})
+        
+        return data
+    },
+    
+    
 }

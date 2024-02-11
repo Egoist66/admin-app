@@ -10,9 +10,9 @@ export type AuthStateType = {
 }
 
 export type LoginStateType = {
-    status: Statuses.IDLE
-    response: string,
-    statusCode: 0 | 1
+    status: Statuses
+    response?: string,
+    statusCode?: 0 | 1
 }
 
 type initialStateType = {
@@ -65,5 +65,7 @@ export const {
 } = appAuthSlice.actions
 
 const selector = (state: AppRootState) => state.appAuth.auth
+const login_selector = (state: AppRootState) => state.appAuth.login
 
 export const AuthSelector = createSelector(selector, (state) => state)
+export const LoginSelector = createSelector(login_selector, (state) => state)

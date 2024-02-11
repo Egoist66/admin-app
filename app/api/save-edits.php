@@ -1,7 +1,14 @@
 <?php
 
+session_start();
+
 require_once('./utils/statuses.php');
 require_once('./utils/time-formatter.php');
+
+if($_SESSION['auth'] !== true){
+     http_response_code(403);
+     die();
+}
 
 $_POST = json_decode(file_get_contents("php://input"), true);
 
@@ -45,7 +52,7 @@ function saveEdits(){
      if ($newhtml && file_exists('../../' . $file)) {
 
           createBackup('../backup/');
-           
+
           file_put_contents('../../' . $file, $newhtml);
           echo json_encode(array(
                "status" => 0,

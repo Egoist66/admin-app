@@ -27,7 +27,7 @@ gulp.task("build-js", () => {
                 filename: 'bundle.min.js'
             },
             watch: false,
-            devtool: "source-map",
+            //devtool: "source-map",
             module: {
                 rules: [
                     {
@@ -90,5 +90,6 @@ gulp.task("watch", () => {
 });
 
 gulp.task("build", gulp.parallel("copy-html", "copy-assets", "copy-api", "build-js"));
+
 
 gulp.task("default", gulp.parallel("watch", "build"));

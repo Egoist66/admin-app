@@ -1,5 +1,11 @@
 <?php
+session_start();
 
+
+if($_SESSION['auth'] !== true){
+     http_response_code(403);
+    die();
+}
 
 $_POST = json_decode(file_get_contents("php://input"), true);
 function saveTemplatePage()

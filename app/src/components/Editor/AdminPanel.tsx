@@ -17,6 +17,8 @@ import { BackupsList } from "../Features/BackupList";
 import { APIBackupResponse } from "../../../api/service/admin-api";
 import { EditorMetaInfo } from "./MetaEditor";
 import { useMeta } from "../../hooks/useMeta";
+import { AuthSelector } from "../../../store/app-auth-slice";
+import { useLogin } from "../../hooks/useLogin";
 
 type AdminPanelProps = {
   files: string[];
@@ -30,20 +32,14 @@ type AdminPanelProps = {
 };
 
 export const AdminPanel: FC<AdminPanelProps> = memo(
-  ({
-    files,
-    deletePage,
-    restoreBackup,
-    backups,
-    virtualDom,
-    save,
-    init,
-  }) => {
+  ({ files, deletePage, restoreBackup, backups, virtualDom, save, init }) => {
     AdminPanel.displayName = "AdminPanel";
 
     const dispatch = useAppDispatch();
+    const {logout} = useLogin()
     const { editing, backup, deleting, uploading } =
       useAppSelector(editorSelector);
+    const { isAuth } = useAppSelector(AuthSelector);
 
     const [isOpeEdit, setOpenEdit] = useToggle();
     const [isOpenPages, setOpenPages] = useToggle();
@@ -84,6 +80,12 @@ export const AdminPanel: FC<AdminPanelProps> = memo(
           >
             Редактировать мета
           </Button>
+
+          {isAuth ? (
+            <Button onClick={logout} color="error" variant="outlined">
+              Выход
+            </Button>
+          ) : null}
         </Grid>
 
         <ModalWindow
@@ -166,9 +168,6 @@ export const AdminPanel: FC<AdminPanelProps> = memo(
           isOpen={isOpenMeta}
           setToggle={setOpenMeta}
         />
-
-       
-        
 
         {editing.status === Statuses.RESOLVED ||
         editing.status === Statuses.ERROR ? (

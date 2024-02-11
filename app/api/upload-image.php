@@ -1,5 +1,14 @@
 <?php
 
+session_start();
+
+
+if($_SESSION['auth'] !== true){
+     http_response_code(403);
+    die();
+}
+
+
 require_once './utils/statuses.php';
 function uploadFile(array $files): void {
 
