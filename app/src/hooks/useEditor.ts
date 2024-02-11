@@ -52,6 +52,7 @@ export const useEditor = () => {
     unwrapTextNodes(newDom!)
     unwrapImages(newDom!)
 
+
     
     const html = serializeDomToString(newDom!)
 

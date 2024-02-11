@@ -19,6 +19,7 @@ type ModalProps = {
   isOpen: boolean;
   response?: string;
   title?: string;
+  hidden?: boolean
   fullScreen?: boolean
   render?: () => ReactNode;
   handlers?: Array<{
@@ -35,6 +36,7 @@ export const ModalWindow: FC<ModalProps> = ({
   isOpen,
   title,
   handlers,
+  hidden,
   fullScreen,
   render,
   status,
@@ -58,6 +60,7 @@ export const ModalWindow: FC<ModalProps> = ({
           position: "absolute",
           right: 8,
           top: 8,
+          display: hidden ? 'none !important': '',
           color: (theme) => theme.palette.grey[500],
         }}
       >

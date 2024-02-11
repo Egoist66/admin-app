@@ -13,6 +13,7 @@ export const store = configureStore({
 })
 
 
+
 export type AppRootState = ReturnType<typeof store.getState>
 export type AppDispatch = ThunkDispatch<AppRootState, unknown, UnknownAction>
 
